@@ -7,12 +7,15 @@ import MoreFacilities from '../components/HomePage/MoreFacilities';
 
 function HomePage() {
   return (
-    <div>
+    <div className='bg-gray-50 min-h-screen flex flex-col'>
       <Header />
-      <Hero />
-      <FeaturedCards />
-      <Recommendations />
-      <MoreFacilities />
+      <main className='flex-1'>
+        <Hero />
+        <FeaturedCards />
+        <Recommendations />
+        <MoreFacilities />
+      </main>
+      <div className='border-t border-gray-200 mt-8' />
       <Footer />
     </div>
   );
