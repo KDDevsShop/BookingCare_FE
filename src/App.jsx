@@ -1,34 +1,35 @@
-import "./App.css";
-import HomePage from "./pages/HomePage";
-import NotFoundPage from "./pages/NotFoundPage";
-import { Route, Routes } from "react-router-dom";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import Login from "./pages/authentication/Login";
-import Register from "./pages/authentication/Register";
-import PatientProfile from "./pages/patient/PatientProfile";
-import CustomerLayout from "./layouts/CustomerLayout";
-import EditPatientProfile from "./pages/patient/EditPatientProfile";
-import ForgotPassword from "./pages/authentication/ForgotPassword";
-import AdminLayout from "./layouts/AdminLayout";
-import DoctorListAdmin from "./pages/admin/DoctorListAdmin";
-import SpecialtyList from "./pages/admin/SpecialtyList";
-import DoctorProfile from "./pages/doctor/DoctorProfile";
-import EditDoctorProfile from "./pages/doctor/EditDoctorProfile";
+import './App.css';
+import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/NotFoundPage';
+import { Route, Routes } from 'react-router-dom';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import Login from './pages/authentication/Login';
+import Register from './pages/authentication/Register';
+import PatientProfile from './pages/patient/PatientProfile';
+import CustomerLayout from './layouts/CustomerLayout';
+import EditPatientProfile from './pages/patient/EditPatientProfile';
+import ForgotPassword from './pages/authentication/ForgotPassword';
+import AdminLayout from './layouts/AdminLayout';
+import DoctorListAdmin from './pages/admin/DoctorListAdmin';
+import SpecialtyList from './pages/admin/SpecialtyList';
+import DoctorProfile from './pages/doctor/DoctorProfile';
+import EditDoctorProfile from './pages/doctor/EditDoctorProfile';
+import Dashboard from './pages/admin/Dashboard';
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/homepage" element={<HomePage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path='/homepage' element={<HomePage />} />
+        <Route path='/reset-password' element={<ResetPasswordPage />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
 
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path='/' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='*' element={<NotFoundPage />} />
 
         <Route
-          path="/me"
+          path='/me'
           element={
             <CustomerLayout>
               <PatientProfile />
@@ -36,7 +37,7 @@ function App() {
           }
         />
         <Route
-          path="/me/edit"
+          path='/me/edit'
           element={
             <CustomerLayout>
               {/* Edit profile page */}
@@ -45,8 +46,17 @@ function App() {
           }
         />
 
+        {/* Admin Routes */}
         <Route
-          path="/admin/doctors"
+          path='/dashboard'
+          element={
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path='/admin/doctors'
           element={
             <AdminLayout>
               <DoctorListAdmin />
@@ -54,15 +64,18 @@ function App() {
           }
         />
         <Route
-          path="/admin/specialties"
+          path='/admin/specialties'
           element={
             <AdminLayout>
               <SpecialtyList />
             </AdminLayout>
           }
         />
+
+        {/* Doctor Routes */}
+
         <Route
-          path="/doctor/profile"
+          path='/doctor/profile'
           element={
             <CustomerLayout>
               <DoctorProfile />
@@ -70,7 +83,7 @@ function App() {
           }
         />
         <Route
-          path="/doctor/profile/edit"
+          path='/doctor/profile/edit'
           element={
             <CustomerLayout>
               {/* Edit profile page */}
