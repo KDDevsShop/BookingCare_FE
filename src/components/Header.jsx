@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
@@ -11,7 +11,9 @@ function Header() {
   } catch {
     account = null;
   }
-  const patientId = account?.id;
+  console.log(account);
+  const isDoctor = account?.role === "doctor";
+  const isPatient = account?.role === "patient";
   const avatarUrl = account?.userAvatar ? account.userAvatar : ``; // fallback to default if not a valid url
   return (
     <header className="bg-blue-600 text-white p-4">
@@ -29,11 +31,13 @@ function Header() {
                 Doctors
               </button>
             </li>
-            {patientId ? (
+            {isPatient || isDoctor ? (
               <>
                 <li>
                   <button
-                    onClick={() => navigate("/me")}
+                    onClick={() =>
+                      navigate(isDoctor ? "/doctor/profile" : "/me")
+                    }
                     className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 font-semibold cursor-pointer overflow-hidden"
                   >
                     <img

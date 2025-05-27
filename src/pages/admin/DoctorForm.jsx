@@ -40,7 +40,6 @@ const DoctorForm = ({
   const [form, setForm] = useState(initialState);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
-
   useEffect(() => {
     if (doctor) {
       setForm({
@@ -48,16 +47,29 @@ const DoctorForm = ({
         doctorSortDesc: doctor.doctorSortDesc || "",
         doctorDetailDesc: doctor.doctorDetailDesc || "",
         examinationPrice: doctor.examinationPrice || "",
-        specialtyId: doctor.specialtyId || "",
-        username: doctor.account?.username || "",
+        specialtyId: doctor.specialty?.id || doctor.specialtyId || "",
+        username:
+          doctor.account && doctor.account.username
+            ? doctor.account.username
+            : "",
         password: "", // Don't prefill password
-        email: doctor.account?.email || "",
-        userGender: doctor.account?.userGender ?? true,
-        userDoB: doctor.account?.userDoB ? doctor.account.userDoB.slice(0,10) : "",
-        userAddress: doctor.account?.userAddress || "",
+        email:
+          doctor.account && doctor.account.email ? doctor.account.email : "",
+        userGender:
+          doctor.account && typeof doctor.account.userGender !== "undefined"
+            ? doctor.account.userGender
+            : true,
+        userDoB:
+          doctor.account && doctor.account.userDoB
+            ? doctor.account.userDoB.slice(0, 10)
+            : "",
+        userAddress:
+          doctor.account && doctor.account.userAddress
+            ? doctor.account.userAddress
+            : "",
       });
       setAvatarPreview(
-        doctor.account?.userAvatar
+        doctor.account && doctor.account.userAvatar
           ? `http://localhost:5000${doctor.account.userAvatar}`
           : ""
       );
@@ -86,15 +98,24 @@ const DoctorForm = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ fontWeight: 700, color: 'primary.main', textAlign: 'center' }}>
+      <DialogTitle
+        sx={{ fontWeight: 700, color: "primary.main", textAlign: "center" }}
+      >
         {doctor ? "Cập nhật bác sĩ" : "Thêm bác sĩ mới"}
       </DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent dividers>
           <Box display="flex" flexDirection="column" gap={3}>
             <Box display="flex" alignItems="center" gap={2}>
-              <Avatar src={avatarPreview} sx={{ width: 64, height: 64, border: '2px solid #6366f1' }} />
-              <Button variant="outlined" component="label" sx={{ borderRadius: 2 }}>
+              <Avatar
+                src={avatarPreview}
+                sx={{ width: 64, height: 64, border: "2px solid #6366f1" }}
+              />
+              <Button
+                variant="outlined"
+                component="label"
+                sx={{ borderRadius: 2 }}
+              >
                 {avatarPreview ? "Đổi ảnh đại diện" : "Chọn ảnh đại diện"}
                 <input
                   type="file"
@@ -153,7 +174,9 @@ const DoctorForm = ({
               ))}
             </TextField>
             <Box mt={2} mb={1}>
-              <Typography variant="subtitle1" fontWeight={600} color="primary">Thông tin tài khoản</Typography>
+              <Typography variant="subtitle1" fontWeight={600} color="primary">
+                Thông tin tài khoản
+              </Typography>
             </Box>
             <TextField
               label="Tên đăng nhập"

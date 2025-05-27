@@ -12,6 +12,8 @@ import ForgotPassword from "./pages/authentication/ForgotPassword";
 import AdminLayout from "./layouts/AdminLayout";
 import DoctorListAdmin from "./pages/admin/DoctorListAdmin";
 import SpecialtyList from "./pages/admin/SpecialtyList";
+import DoctorProfile from "./pages/doctor/DoctorProfile";
+import EditDoctorProfile from "./pages/doctor/EditDoctorProfile";
 
 function App() {
   return (
@@ -57,6 +59,23 @@ function App() {
             <AdminLayout>
               <SpecialtyList />
             </AdminLayout>
+          }
+        />
+        <Route
+          path="/doctor/profile"
+          element={
+            <CustomerLayout>
+              <DoctorProfile />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/doctor/profile/edit"
+          element={
+            <CustomerLayout>
+              {/* Edit profile page */}
+              <EditDoctorProfile />
+            </CustomerLayout>
           }
         />
       </Routes>

@@ -1,38 +1,36 @@
 import React, { useEffect, useState } from "react";
-import patientService from "../../services/patient.service";
+import doctorService from "../../services/doctor.service";
 import { CircularProgress } from "@mui/material";
 
-const PatientProfile = () => {
-  // Parse account from localStorage
+const DoctorProfile = () => {
   let currentAccount = null;
   try {
     currentAccount = JSON.parse(localStorage.getItem("account"));
   } catch {
     currentAccount = null;
   }
-  const patientId = currentAccount?.patient?.id;
-
-  const [patient, setPatient] = useState(null);
+  const doctorId = currentAccount?.doctor?.id;
+  console.log(currentAccount);
+  const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const baseUrl = "http://localhost:5000";
 
   useEffect(() => {
-    const fetchPatient = async () => {
+    const fetchDoctor = async () => {
       setLoading(true);
       setError("");
       try {
-        const response = await patientService.getPatientById(patientId);
-        console.log(patientId);
-        setPatient(response.data || response); // handle both .data and direct
+        const response = await doctorService.getDoctorById(doctorId);
+        setDoctor(response.data || response);
       } catch (err) {
-        setError("Không thể tải thông tin bệnh nhân.");
+        setError("Không thể tải thông tin bác sĩ.");
       } finally {
         setLoading(false);
       }
     };
-    if (patientId) fetchPatient();
-  }, [patientId]);
+    if (doctorId) fetchDoctor();
+  }, [doctorId]);
 
   if (loading) {
     return (
@@ -50,17 +48,23 @@ const PatientProfile = () => {
     );
   }
 
-  if (!patient) {
+  if (!doctor) {
     return null;
   }
-  console.log(patient);
 
-  const { patientName, patientPhone, patientEmail, account } = patient;
+  const {
+    doctorName,
+    doctorSortDesc,
+    doctorDetailDesc,
+    examinationPrice,
+    specialty,
+    account,
+  } = doctor;
 
   return (
     <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
       <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">
-        Thông tin cá nhân
+        Thông tin bác sĩ
       </h2>
       <div className="flex flex-col items-center mb-6">
         <img
@@ -76,15 +80,11 @@ const PatientProfile = () => {
       <div className="space-y-4">
         <div>
           <span className="font-semibold text-blue-700">Họ và tên: </span>
-          <span>{patientName}</span>
+          <span>{doctorName}</span>
         </div>
         <div>
-          <span className="font-semibold text-blue-700">Số điện thoại: </span>
-          <span>{patientPhone}</span>
-        </div>
-        <div>
-          <span className="font-semibold text-blue-700">Email: </span>
-          <span>{patientEmail}</span>
+          <span className="font-semibold text-blue-700">Chuyên khoa: </span>
+          <span>{specialty?.specialtyName || "-"}</span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Giới tính: </span>
@@ -108,10 +108,22 @@ const PatientProfile = () => {
           <span className="font-semibold text-blue-700">Địa chỉ: </span>
           <span>{account?.userAddress || "-"}</span>
         </div>
+        <div>
+          <span className="font-semibold text-blue-700">Giá khám: </span>
+          <span>{examinationPrice ? `${examinationPrice} VNĐ` : "-"}</span>
+        </div>
+        <div>
+          <span className="font-semibold text-blue-700">Mô tả ngắn: </span>
+          <span>{doctorSortDesc || "-"}</span>
+        </div>
+        <div>
+          <span className="font-semibold text-blue-700">Mô tả chi tiết: </span>
+          <span>{doctorDetailDesc || "-"}</span>
+        </div>
         <div className="flex justify-end mt-6">
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-            onClick={() => (window.location.href = "/me/edit")}
+            onClick={() => (window.location.href = "/doctor/profile/edit")}
           >
             Chỉnh sửa
           </button>
@@ -121,4 +133,4 @@ const PatientProfile = () => {
   );
 };
 
-export default PatientProfile;
+export default DoctorProfile;

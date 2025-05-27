@@ -103,7 +103,7 @@ const DoctorListAdmin = () => {
   const fetchSpecialties = async () => {
     try {
       const res = await SpecialtyService.getAllSpecialties();
-      setSpecialties(res.data || []);
+      setSpecialties(res || []);
     } catch {
       // ignore error
     }
@@ -120,6 +120,7 @@ const DoctorListAdmin = () => {
   };
 
   const handleEdit = (params) => {
+    console.log(params.row);
     setEditDoctor(params.row);
     setOpenForm(true);
   };

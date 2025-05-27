@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import patientService from "../../services/patient.service";
+import doctorService from "../../services/doctor.service";
 import {
   CircularProgress,
   Button,
@@ -14,14 +14,14 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const EditPatientProfile = () => {
+const EditDoctorProfile = () => {
   let currentAccount = null;
   try {
     currentAccount = JSON.parse(localStorage.getItem("account"));
   } catch {
     currentAccount = null;
   }
-  const patientId = currentAccount?.patient?.id;
+  const doctorId = currentAccount?.doctor?.id;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -34,35 +34,36 @@ const EditPatientProfile = () => {
   const navigate = useNavigate();
   const baseUrl = "http://localhost:5000";
 
-  console.log(avatarPreview);
   useEffect(() => {
-    const fetchPatient = async () => {
+    const fetchDoctor = async () => {
       setLoading(true);
       setError("");
       try {
-        const response = await patientService.getPatientById(patientId);
+        const response = await doctorService.getDoctorById(doctorId);
         const data = response.data || response;
         console.log(data);
         setForm({
-          patientName: data.patientName || "",
-          patientPhone: data.patientPhone || "",
-          patientEmail: data.patientEmail || "",
+          doctorName: data.doctorName || "",
+          doctorSortDesc: data.doctorSortDesc || "",
+          doctorDetailDesc: data.doctorDetailDesc || "",
+          examinationPrice: data.examinationPrice || "",
           userGender: data.account?.userGender?.toString() || "true",
           userDoB: data.account?.userDoB
             ? data.account.userDoB.slice(0, 10)
             : "",
           userAddress: data.account?.userAddress || "",
           username: data.account?.username || "",
+          email: data.account?.email || "",
         });
         setAvatarPreview(data.account?.userAvatar || "/public/DoctorLogin.png");
       } catch {
-        setError("Không thể tải thông tin bệnh nhân.");
+        setError("Không thể tải thông tin bác sĩ.");
       } finally {
         setLoading(false);
       }
     };
-    if (patientId) fetchPatient();
-  }, [patientId]);
+    if (doctorId) fetchDoctor();
+  }, [doctorId]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -88,17 +89,17 @@ const EditPatientProfile = () => {
     try {
       const userAvatarFile = avatarFile;
       const updateData = {
-        patientName: form.patientName,
-        patientPhone: form.patientPhone,
-        // patientEmail is not editable
-
+        doctorName: form.doctorName,
+        doctorSortDesc: form.doctorSortDesc,
+        doctorDetailDesc: form.doctorDetailDesc,
+        examinationPrice: form.examinationPrice,
         userGender: form.userGender,
         userDoB: form.userDoB,
         userAddress: form.userAddress,
       };
-      await patientService.updatePatient(patientId, updateData, userAvatarFile);
+      await doctorService.updateDoctor(doctorId, updateData, userAvatarFile);
       setSuccess("Cập nhật thành công!");
-      setTimeout(() => navigate("/me"), 1200);
+      setTimeout(() => navigate("/doctor/profile"), 1200);
     } catch {
       setError("Cập nhật thất bại. Vui lòng thử lại.");
     } finally {
@@ -132,7 +133,7 @@ const EditPatientProfile = () => {
           fontWeight={700}
           gutterBottom
         >
-          Chỉnh sửa thông tin cá nhân
+          Chỉnh sửa thông tin bác sĩ
         </Typography>
         <form onSubmit={handleSubmit} className="space-y-4 mt-6">
           <Box className="flex flex-col items-center mb-4">
@@ -172,31 +173,48 @@ const EditPatientProfile = () => {
             margin="normal"
           />
           <TextField
-            label="Họ và tên"
-            name="patientName"
-            value={form.patientName}
-            onChange={handleChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Số điện thoại"
-            name="patientPhone"
-            value={form.patientPhone}
-            onChange={handleChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
             label="Email"
-            name="patientEmail"
-            value={form.patientEmail}
+            name="email"
+            value={form.email}
+            fullWidth
+            InputProps={{ readOnly: true }}
+            margin="normal"
+          />
+          <TextField
+            label="Họ và tên"
+            name="doctorName"
+            value={form.doctorName}
+            onChange={handleChange}
+            fullWidth
+            required
+            margin="normal"
+          />
+          <TextField
+            label="Mô tả ngắn"
+            name="doctorSortDesc"
+            value={form.doctorSortDesc}
+            onChange={handleChange}
             fullWidth
             margin="normal"
-            InputProps={{ readOnly: true }}
-            helperText="Không thể thay đổi email."
+          />
+          <TextField
+            label="Mô tả chi tiết"
+            name="doctorDetailDesc"
+            value={form.doctorDetailDesc}
+            onChange={handleChange}
+            fullWidth
+            multiline
+            minRows={3}
+            margin="normal"
+          />
+          <TextField
+            label="Giá khám"
+            name="examinationPrice"
+            value={form.examinationPrice}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            type="number"
           />
           <Box className="flex items-center gap-6 mt-2">
             <Typography className="font-semibold">Giới tính:</Typography>
@@ -242,7 +260,7 @@ const EditPatientProfile = () => {
             <Button
               variant="outlined"
               color="secondary"
-              onClick={() => navigate("/me")}
+              onClick={() => navigate("/doctor/profile")}
               size="large"
               sx={{ minWidth: 140 }}
             >
@@ -260,4 +278,4 @@ const EditPatientProfile = () => {
   );
 };
 
-export default EditPatientProfile;
+export default EditDoctorProfile;
