@@ -14,6 +14,7 @@ import DoctorListAdmin from "./pages/admin/DoctorListAdmin";
 import SpecialtyList from "./pages/admin/SpecialtyList";
 import DoctorProfile from "./pages/doctor/DoctorProfile";
 import EditDoctorProfile from "./pages/doctor/EditDoctorProfile";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 function App() {
   return (
@@ -76,6 +77,14 @@ function App() {
               {/* Edit profile page */}
               <EditDoctorProfile />
             </CustomerLayout>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminLayout>
+              <AdminDashboard />
+            </AdminLayout>
           }
         />
       </Routes>
