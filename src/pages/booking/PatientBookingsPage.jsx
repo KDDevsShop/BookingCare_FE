@@ -1,0 +1,158 @@
+import React, { useEffect, useState } from "react";
+import BookingService from "../../services/booking.service";
+import { DataGrid } from "@mui/x-data-grid";
+
+const statusColors = {
+  "Chờ xác nhận": "bg-blue-100 text-blue-700",
+  "Đã xác nhận": "bg-green-100 text-green-700",
+  "Đã hủy": "bg-red-100 text-red-700",
+  "Đã hoàn thành": "bg-gray-100 text-gray-700",
+};
+
+function PatientBookingsPage() {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("");
+
+  useEffect(() => {
+    async function fetchBookings() {
+      setLoading(true);
+      try {
+        const account = JSON.parse(localStorage.getItem("account"));
+        if (!account || account.role !== "patient") {
+          setError(
+            "Bạn cần đăng nhập tài khoản bệnh nhân để xem lịch sử đặt lịch."
+          );
+          setBookings([]);
+          return;
+        }
+        const res = await BookingService.getAllBookingsByPatientId(
+          account.patient.id
+        );
+        console.log(res);
+        setBookings(res || []);
+      } catch (err) {
+        setError("Không thể tải danh sách đặt lịch.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBookings();
+  }, []);
+
+  const filteredBookings = statusFilter
+    ? bookings.filter((b) => b.bookingStatus === statusFilter)
+    : bookings;
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 70 },
+    {
+      field: "doctorName",
+      headerName: "Bác sĩ",
+      flex: 1.5,
+      renderCell: (params) => params.row.doctor?.doctorName || "-",
+    },
+    { field: "bookingDate", headerName: "Ngày", width: 120 },
+    {
+      field: "time",
+      headerName: "Thời gian",
+      width: 200,
+      renderCell: (params) =>
+        `${params.row.bookingStartTime} - ${params.row.bookingEndTime}`,
+    },
+    {
+      field: "bookingReason",
+      headerName: "Lý do khám",
+      flex: 2,
+    },
+    {
+      field: "bookingStatus",
+      headerName: "Trạng thái",
+      width: 140,
+      renderCell: (params) => (
+        <span
+          className={`px-2 py-1 rounded-lg text-xs font-semibold ${
+            statusColors[params.value] || "bg-gray-100 text-gray-700"
+          }`}
+        >
+          {params.value}
+        </span>
+      ),
+    },
+
+    {
+      field: "actions",
+      headerName: "Chức năng",
+      width: 120,
+      renderCell: (params) => (
+        <button
+          className="px-3 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-sm font-semibold"
+          onClick={() => (window.location.href = `/booking/${params.row.id}`)}
+        >
+          Xem
+        </button>
+      ),
+      sortable: false,
+      filterable: false,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-10">
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
+        <h2 className="text-2xl font-bold text-blue-800 mb-6">
+          Lịch sử đặt khám của bạn
+        </h2>
+        <div className="mb-4 flex flex-col md:flex-row md:items-center gap-4">
+          <label className="font-medium text-blue-700">
+            Lọc theo trạng thái:
+          </label>
+          <select
+            className="border border-blue-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">Tất cả</option>
+            <option value="Chờ xác nhận">Chờ xác nhận</option>
+            <option value="Đã xác nhận">Đã xác nhận</option>
+            <option value="Đã hủy">Đã hủy</option>
+            <option value="Đã hoàn thành">Đã hoàn thành</option>
+          </select>
+        </div>
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        <div style={{ height: 550, width: "100%" }}>
+          <DataGrid
+            rows={filteredBookings}
+            columns={columns}
+            pageSize={8}
+            rowsPerPageOptions={[8, 16, 32]}
+            loading={loading}
+            getRowId={(row) => row.id}
+            className="!border-blue-100"
+            sx={{
+              "& .MuiDataGrid-columnHeaders": {
+                background: "#e0e7ff",
+                color: "#1e40af",
+                fontWeight: 700,
+                fontSize: 16,
+              },
+              "& .MuiDataGrid-row": {
+                background: "#f8fafc",
+                borderRadius: 2,
+              },
+              "& .MuiDataGrid-cell": {
+                fontSize: 15,
+              },
+              "& .MuiDataGrid-footerContainer": {
+                background: "#e0e7ff",
+              },
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default PatientBookingsPage;

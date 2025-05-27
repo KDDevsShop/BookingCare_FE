@@ -11,8 +11,12 @@ import {
   CircularProgress,
   Avatar,
   Typography,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import DoctorService from "../../services/doctor.service";
+import PaymentMethodService from "../../services/paymentMethod.service";
 
 const initialState = {
   doctorName: "",
@@ -40,6 +44,9 @@ const DoctorForm = ({
   const [form, setForm] = useState(initialState);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+
   useEffect(() => {
     if (doctor) {
       setForm({
@@ -80,6 +87,27 @@ const DoctorForm = ({
     setAvatarFile(null);
   }, [doctor]);
 
+  useEffect(() => {
+    async function fetchPayments() {
+      try {
+        const res = await PaymentMethodService.getAllPaymentMethods();
+        console.log(res);
+        setPaymentMethods(res || []);
+      } catch {
+        // ignore error
+      }
+    }
+    fetchPayments();
+  }, []);
+
+  useEffect(() => {
+    if (doctor && doctor.paymentMethods) {
+      setSelectedPayments(doctor.paymentMethods.map((pm) => pm.id));
+    } else {
+      setSelectedPayments([]);
+    }
+  }, [doctor]);
+
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     setForm({ ...form, [name]: type === "radio" ? value === "true" : value });
@@ -91,9 +119,14 @@ const DoctorForm = ({
     setAvatarPreview(file ? URL.createObjectURL(file) : "");
   };
 
+  const handlePaymentChange = (e) => {
+    const value = e.target.value;
+    setSelectedPayments(typeof value === "string" ? value.split(",") : value);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(form, avatarFile);
+    onSubmit({ ...form, paymentMethodIds: selectedPayments }, avatarFile);
   };
 
   return (
@@ -173,6 +206,33 @@ const DoctorForm = ({
                 </MenuItem>
               ))}
             </TextField>
+            {/* Payment Methods Selection - updated to use Select instead of deprecated SelectProps */}
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="payment-methods-label">
+                Phương thức thanh toán
+              </InputLabel>
+              <Select
+                labelId="payment-methods-label"
+                id="payment-methods-select"
+                multiple
+                value={selectedPayments}
+                onChange={handlePaymentChange}
+                label="Phương thức thanh toán"
+                renderValue={(selected) =>
+                  paymentMethods
+                    .filter((pm) => selected.includes(pm.id))
+                    .map((pm) => pm.paymentMethodName)
+                    .join(", ") || "Chọn phương thức thanh toán"
+                }
+                name="paymentMethodIds"
+              >
+                {paymentMethods.map((pm) => (
+                  <MenuItem key={pm.id} value={pm.id}>
+                    {pm.paymentMethodName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Box mt={2} mb={1}>
               <Typography variant="subtitle1" fontWeight={600} color="primary">
                 Thông tin tài khoản

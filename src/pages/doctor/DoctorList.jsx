@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DoctorService from "../../services/doctor.service";
 
 const baseUrl = "http://localhost:5000";
@@ -7,12 +8,13 @@ function DoctorList() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchDoctors() {
       try {
         const res = await DoctorService.getAllDoctors();
-        setDoctors(res.data || []);
+        setDoctors(res || []);
       } catch (err) {
         setError("Failed to fetch doctors");
       } finally {
@@ -36,7 +38,8 @@ function DoctorList() {
           {doctors.map((doctor) => (
             <div
               key={doctor.id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow p-6 flex flex-col items-center border border-blue-100"
+              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow p-6 flex flex-col items-center border border-blue-100 cursor-pointer"
+              onClick={() => navigate(`/doctors/${doctor.id}`)}
             >
               <img
                 src={
@@ -54,12 +57,18 @@ function DoctorList() {
                 {doctor.doctorSortDesc}
               </p>
               <div className="text-blue-600 font-bold mb-2">
-                Giá khám: {doctor.examinationPrice?.toLocaleString()} VNĐ
+                Giá khám: {Number(doctor.examinationPrice).toLocaleString()} VNĐ
               </div>
               <div className="text-sm text-gray-500 mb-2">
                 Chuyên khoa: {doctor.specialty?.specialtyName || "-"}
               </div>
-              <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+              <button
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/doctors/${doctor.id}`);
+                }}
+              >
                 Xem chi tiết
               </button>
             </div>

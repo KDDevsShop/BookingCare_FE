@@ -15,6 +15,11 @@ import SpecialtyList from "./pages/admin/SpecialtyList";
 import DoctorProfile from "./pages/doctor/DoctorProfile";
 import EditDoctorProfile from "./pages/doctor/EditDoctorProfile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import DoctorList from "./pages/doctor/DoctorList";
+import DoctorDetail from "./pages/doctor/DoctorDetail";
+import BookingPage from "./pages/booking/BookingPage";
+import BookingDetailPage from "./pages/booking/BookingDetailPage";
+import PatientBookingsPage from "./pages/booking/PatientBookingsPage";
 
 function App() {
   return (
@@ -85,6 +90,46 @@ function App() {
             <AdminLayout>
               <AdminDashboard />
             </AdminLayout>
+          }
+        />
+        <Route
+          path="/doctors"
+          element={
+            <CustomerLayout>
+              <DoctorList />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/doctors/:id"
+          element={
+            <CustomerLayout>
+              <DoctorDetail />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/booking"
+          element={
+            <CustomerLayout>
+              <BookingPage />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/booking/:id"
+          element={
+            <CustomerLayout>
+              <BookingDetailPage />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/my-bookings"
+          element={
+            <CustomerLayout>
+              <PatientBookingsPage />
+            </CustomerLayout>
           }
         />
       </Routes>
