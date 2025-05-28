@@ -14,7 +14,6 @@ import DoctorListAdmin from './pages/admin/DoctorListAdmin';
 import SpecialtyList from './pages/admin/SpecialtyList';
 import DoctorProfile from './pages/doctor/DoctorProfile';
 import EditDoctorProfile from './pages/doctor/EditDoctorProfile';
-import AdminDashboard from './pages/admin/AdminDashboard';
 import DoctorList from './pages/doctor/DoctorList';
 import DoctorDetail from './pages/doctor/DoctorDetail';
 import BookingPage from './pages/booking/BookingPage';
