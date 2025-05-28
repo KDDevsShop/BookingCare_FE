@@ -25,16 +25,16 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path='/homepage' element={<HomePage />} />
-        <Route path='/reset-password' element={<ResetPasswordPage />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path="/homepage" element={<HomePage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        <Route path='/' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='*' element={<NotFoundPage />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFoundPage />} />
 
         <Route
-          path='/me'
+          path="/me"
           element={
             <CustomerLayout>
               <PatientProfile />
@@ -42,7 +42,7 @@ function App() {
           }
         />
         <Route
-          path='/me/edit'
+          path="/me/edit"
           element={
             <CustomerLayout>
               {/* Edit profile page */}
@@ -53,7 +53,7 @@ function App() {
 
         {/* Admin Routes */}
         <Route
-          path='/dashboard'
+          path="/dashboard"
           element={
             <AdminLayout>
               <Dashboard />
@@ -61,7 +61,7 @@ function App() {
           }
         />
         <Route
-          path='/admin/doctors'
+          path="/admin/doctors"
           element={
             <AdminLayout>
               <DoctorListAdmin />
@@ -69,7 +69,7 @@ function App() {
           }
         />
         <Route
-          path='/admin/specialties'
+          path="/admin/specialties"
           element={
             <AdminLayout>
               <SpecialtyList />
@@ -80,7 +80,7 @@ function App() {
         {/* Doctor Routes */}
 
         <Route
-          path='/doctor/profile'
+          path="/doctor/profile"
           element={
             <CustomerLayout>
               <DoctorProfile />
@@ -88,7 +88,7 @@ function App() {
           }
         />
         <Route
-          path='/doctor/profile/edit'
+          path="/doctor/profile/edit"
           element={
             <CustomerLayout>
               {/* Edit profile page */}
@@ -96,16 +96,9 @@ function App() {
             </CustomerLayout>
           }
         />
+
         <Route
-          path='/admin/dashboard'
-          element={
-            <AdminLayout>
-              <AdminDashboard />
-            </AdminLayout>
-          }
-        />
-        <Route
-          path='/doctors'
+          path="/doctors"
           element={
             <CustomerLayout>
               <DoctorList />
@@ -113,7 +106,7 @@ function App() {
           }
         />
         <Route
-          path='/doctors/:id'
+          path="/doctors/:id"
           element={
             <CustomerLayout>
               <DoctorDetail />
@@ -121,7 +114,7 @@ function App() {
           }
         />
         <Route
-          path='/booking'
+          path="/booking"
           element={
             <CustomerLayout>
               <BookingPage />
@@ -129,7 +122,7 @@ function App() {
           }
         />
         <Route
-          path='/booking/:id'
+          path="/booking/:id"
           element={
             <CustomerLayout>
               <BookingDetailPage />
@@ -137,7 +130,7 @@ function App() {
           }
         />
         <Route
-          path='/my-bookings'
+          path="/my-bookings"
           element={
             <CustomerLayout>
               <PatientBookingsPage />
