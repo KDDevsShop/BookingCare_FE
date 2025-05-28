@@ -1,19 +1,25 @@
-import './App.css';
-import HomePage from './pages/HomePage';
-import NotFoundPage from './pages/NotFoundPage';
-import { Route, Routes } from 'react-router-dom';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import Login from './pages/authentication/Login';
-import Register from './pages/authentication/Register';
-import PatientProfile from './pages/patient/PatientProfile';
-import CustomerLayout from './layouts/CustomerLayout';
-import EditPatientProfile from './pages/patient/EditPatientProfile';
-import ForgotPassword from './pages/authentication/ForgotPassword';
-import AdminLayout from './layouts/AdminLayout';
-import DoctorListAdmin from './pages/admin/DoctorListAdmin';
-import SpecialtyList from './pages/admin/SpecialtyList';
-import DoctorProfile from './pages/doctor/DoctorProfile';
-import EditDoctorProfile from './pages/doctor/EditDoctorProfile';
+import "./App.css";
+import HomePage from "./pages/HomePage";
+import NotFoundPage from "./pages/NotFoundPage";
+import { Route, Routes } from "react-router-dom";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import Login from "./pages/authentication/Login";
+import Register from "./pages/authentication/Register";
+import PatientProfile from "./pages/patient/PatientProfile";
+import CustomerLayout from "./layouts/CustomerLayout";
+import EditPatientProfile from "./pages/patient/EditPatientProfile";
+import ForgotPassword from "./pages/authentication/ForgotPassword";
+import AdminLayout from "./layouts/AdminLayout";
+import DoctorListAdmin from "./pages/admin/DoctorListAdmin";
+import SpecialtyList from "./pages/admin/SpecialtyList";
+import DoctorProfile from "./pages/doctor/DoctorProfile";
+import EditDoctorProfile from "./pages/doctor/EditDoctorProfile";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import DoctorList from "./pages/doctor/DoctorList";
+import DoctorDetail from "./pages/doctor/DoctorDetail";
+import BookingPage from "./pages/booking/BookingPage";
+import BookingDetailPage from "./pages/booking/BookingDetailPage";
+import PatientBookingsPage from "./pages/booking/PatientBookingsPage";
 import Dashboard from './pages/admin/Dashboard';
 
 function App() {
@@ -88,6 +94,47 @@ function App() {
             <CustomerLayout>
               {/* Edit profile page */}
               <EditDoctorProfile />
+            </CustomerLayout>
+          }
+        />
+
+        <Route
+          path="/doctors"
+          element={
+            <CustomerLayout>
+              <DoctorList />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/doctors/:id"
+          element={
+            <CustomerLayout>
+              <DoctorDetail />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/booking"
+          element={
+            <CustomerLayout>
+              <BookingPage />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/booking/:id"
+          element={
+            <CustomerLayout>
+              <BookingDetailPage />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/my-bookings"
+          element={
+            <CustomerLayout>
+              <PatientBookingsPage />
             </CustomerLayout>
           }
         />

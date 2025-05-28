@@ -283,11 +283,39 @@ const DoctorListAdmin = () => {
                   {Number(viewDoctor.examinationPrice).toLocaleString()} VNĐ
                 </Typography>
                 <Typography>
+                  Phương thức thanh toán:{" "}
+                  {viewDoctor.paymentMethods &&
+                  viewDoctor.paymentMethods.length > 0
+                    ? viewDoctor.paymentMethods
+                        .map((pm) => pm.paymentMethodName)
+                        .join(", ")
+                    : "-"}
+                </Typography>
+                <Typography>
                   Chuyên khoa: {viewDoctor.specialty?.specialtyName || "-"}
                 </Typography>
                 <Typography>
                   Tài khoản: {viewDoctor.account?.username} (
                   {viewDoctor.account?.email})
+                </Typography>
+                <Typography>
+                  Giới tính:{" "}
+                  {viewDoctor.account?.userGender === true ||
+                  viewDoctor.account?.userGender === "true"
+                    ? "Nam"
+                    : viewDoctor.account?.userGender === false ||
+                      viewDoctor.account?.userGender === "false"
+                    ? "Nữ"
+                    : "-"}
+                </Typography>
+                <Typography>
+                  Ngày sinh:{" "}
+                  {viewDoctor.account?.userDoB
+                    ? new Date(viewDoctor.account.userDoB).toLocaleDateString()
+                    : "-"}
+                </Typography>
+                <Typography>
+                  Địa chỉ: {viewDoctor.account?.userAddress || "-"}
                 </Typography>
               </Box>
             )}

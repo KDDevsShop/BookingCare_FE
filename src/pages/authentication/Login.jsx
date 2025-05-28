@@ -28,9 +28,11 @@ const Login = () => {
         localStorage.setItem("token", response.token);
         localStorage.setItem("account", JSON.stringify(response.account));
         toast.success("Đăng nhập thành công!");
-        if (response.account?.isAdmin) {
-          navigate("/admin/doctors");
-        } else {
+        if (response.account?.role === "admin") {
+          navigate("/admin/dashboard");
+        } else if (response.account?.role === "doctor") {
+          navigate("/doctor/profile");
+        } else if (response.account?.role === "patient") {
           navigate("/homepage");
         }
       } else {

@@ -11,7 +11,6 @@ function Header() {
   } catch {
     account = null;
   }
-  console.log(account);
   const isDoctor = account?.role === "doctor";
   const isPatient = account?.role === "patient";
   const avatarUrl = account?.userAvatar ? account.userAvatar : ``; // fallback to default if not a valid url
@@ -28,9 +27,19 @@ function Header() {
                 onClick={() => navigate("/doctors")}
                 className="text-white hover:underline hover:opacity-90 transition font-semibold text-lg"
               >
-                Doctors
+                Tìm bác sĩ
               </button>
             </li>
+            {isPatient && (
+              <li>
+                <button
+                  onClick={() => navigate("/my-bookings")}
+                  className="bg-white text-blue-600 py-2 px-4 rounded-md shadow-sm hover:bg-blue-100 font-semibold transition-all border border-blue-200"
+                >
+                  Lịch đăng ký khám
+                </button>
+              </li>
+            )}
             {isPatient || isDoctor ? (
               <>
                 <li>
