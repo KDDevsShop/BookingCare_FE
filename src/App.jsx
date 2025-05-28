@@ -19,6 +19,7 @@ import DoctorDetail from './pages/doctor/DoctorDetail';
 import BookingPage from './pages/booking/BookingPage';
 import BookingDetailPage from './pages/booking/BookingDetailPage';
 import PatientBookingsPage from './pages/booking/PatientBookingsPage';
+import Dashboard from './pages/admin/Dashboard';
 
 function App() {
   return (
