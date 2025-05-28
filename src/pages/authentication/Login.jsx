@@ -1,48 +1,48 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import authService from "../../services/auth.service";
-import { toast } from "react-toastify";
-import { CircularProgress } from "@mui/material";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import authService from '../../services/auth.service';
+import { toast } from 'react-toastify';
+import { CircularProgress } from '@mui/material';
 
 const Login = () => {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    setError("");
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError('');
     try {
       const response = await authService.login(credentials);
       if (response && response.token) {
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("account", JSON.stringify(response.account));
-        toast.success("Đăng nhập thành công!");
-        if (response.account?.role === "admin") {
-          navigate("/admin/dashboard");
-        } else if (response.account?.role === "doctor") {
-          navigate("/doctor/profile");
-        } else if (response.account?.role === "patient") {
-          navigate("/homepage");
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('account', JSON.stringify(response.account));
+        toast.success('Đăng nhập thành công!');
+        if (response.account?.role === 'admin') {
+          navigate('/dashboard');
+        } else if (response.account?.role === 'doctor') {
+          navigate('/doctor/profile');
+        } else if (response.account?.role === 'patient') {
+          navigate('/homepage');
         }
       } else {
-        setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
-        toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+        toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
       }
     } catch (err) {
       console.log(err);
-      setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
-      toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+      setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
     } finally {
       setLoading(false);
     }
@@ -142,15 +142,15 @@ const Login = () => {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl font-bold text-lg shadow-lg transition duration-200 flex items-center justify-center"
             >
               {loading ? (
-                <CircularProgress size={"1.5rem"} color="inherit" />
+                <CircularProgress size={'1.5rem'} color="inherit" />
               ) : (
-                "Đăng nhập"
+                'Đăng nhập'
               )}
             </button>
           </form>
 
           <div className="mt-8 text-center text-gray-500">
-            Chưa có tài khoản?{" "}
+            Chưa có tài khoản?{' '}
             <Link
               to="/register"
               className="text-blue-600 font-semibold hover:underline"
