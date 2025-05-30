@@ -1,28 +1,32 @@
-import React, { useEffect, useState } from "react";
-import BookingService from "../../services/booking.service";
-import { DataGrid } from "@mui/x-data-grid";
+import React, { useEffect, useState } from 'react';
+import BookingService from '../../services/booking.service';
+import { DataGrid } from '@mui/x-data-grid';
+import { toast } from 'react-toastify';
 
 const statusColors = {
-  "Chờ xác nhận": "bg-blue-100 text-blue-700",
-  "Đã xác nhận": "bg-green-100 text-green-700",
-  "Đã hủy": "bg-red-100 text-red-700",
-  "Đã hoàn thành": "bg-gray-100 text-gray-700",
+  'Chờ xác nhận': 'bg-blue-100 text-blue-700',
+  'Đã xác nhận': 'bg-green-100 text-green-700',
+  'Đã hủy': 'bg-red-100 text-red-700',
+  'Đã hoàn thành': 'bg-gray-100 text-gray-700',
 };
 
 function PatientBookingsPage() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState(null);
+  const [cancelSuccess, setCancelSuccess] = useState(null);
 
   useEffect(() => {
     async function fetchBookings() {
       setLoading(true);
       try {
-        const account = JSON.parse(localStorage.getItem("account"));
-        if (!account || account.role !== "patient") {
+        const account = JSON.parse(localStorage.getItem('account'));
+        if (!account || account.role !== 'patient') {
           setError(
-            "Bạn cần đăng nhập tài khoản bệnh nhân để xem lịch sử đặt lịch."
+            'Bạn cần đăng nhập tài khoản bệnh nhân để xem lịch sử đặt lịch.'
           );
           setBookings([]);
           return;
@@ -32,8 +36,8 @@ function PatientBookingsPage() {
         );
         console.log(res);
         setBookings(res || []);
-      } catch (err) {
-        setError("Không thể tải danh sách đặt lịch.");
+      } catch {
+        setError('Không thể tải danh sách đặt lịch.');
       } finally {
         setLoading(false);
       }
@@ -45,35 +49,60 @@ function PatientBookingsPage() {
     ? bookings.filter((b) => b.bookingStatus === statusFilter)
     : bookings;
 
+  const handleCancelBooking = async (id) => {
+    setCancelLoading(true);
+    setCancelError(null);
+    setCancelSuccess(null);
+    try {
+      const res = await BookingService.cancelBooking(id);
+      console.log(res);
+
+      const msg = res?.message;
+      if (msg === 'Bạn chỉ có thể hủy lịch trước giờ hẹn ít nhất 1 tiếng.') {
+        toast.error(msg);
+      } else {
+        toast.success('Đã hủy lịch thành công.');
+        setBookings((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, bookingStatus: 'Đã hủy' } : b))
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      setCancelError('Không thể hủy lịch khám. Vui lòng thử lại.');
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
   const columns = [
-    { field: "id", headerName: "ID", width: 70 },
+    { field: 'id', headerName: 'ID', width: 70 },
     {
-      field: "doctorName",
-      headerName: "Bác sĩ",
+      field: 'doctorName',
+      headerName: 'Bác sĩ',
       flex: 1.5,
-      renderCell: (params) => params.row.doctor?.doctorName || "-",
+      renderCell: (params) => params.row.doctor?.doctorName || '-',
     },
-    { field: "bookingDate", headerName: "Ngày", width: 120 },
+    { field: 'bookingDate', headerName: 'Ngày', width: 120 },
     {
-      field: "time",
-      headerName: "Thời gian",
+      field: 'time',
+      headerName: 'Thời gian',
       width: 200,
       renderCell: (params) =>
         `${params.row.bookingStartTime} - ${params.row.bookingEndTime}`,
     },
     {
-      field: "bookingReason",
-      headerName: "Lý do khám",
+      field: 'bookingReason',
+      headerName: 'Lý do khám',
       flex: 2,
     },
     {
-      field: "bookingStatus",
-      headerName: "Trạng thái",
+      field: 'bookingStatus',
+      headerName: 'Trạng thái',
       width: 140,
       renderCell: (params) => (
         <span
           className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-            statusColors[params.value] || "bg-gray-100 text-gray-700"
+            statusColors[params.value] || 'bg-gray-100 text-gray-700'
           }`}
         >
           {params.value}
@@ -82,16 +111,27 @@ function PatientBookingsPage() {
     },
 
     {
-      field: "actions",
-      headerName: "Chức năng",
-      width: 120,
+      field: 'actions',
+      headerName: 'Chức năng',
+      width: 180,
       renderCell: (params) => (
-        <button
-          className="px-3 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-sm font-semibold"
-          onClick={() => (window.location.href = `/booking/${params.row.id}`)}
-        >
-          Xem
-        </button>
+        <div className="flex gap-2 p-3">
+          <button
+            className="px-3 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-sm font-semibold"
+            onClick={() => (window.location.href = `/booking/${params.row.id}`)}
+          >
+            Xem
+          </button>
+          {params.row.bookingStatus === 'Chờ xác nhận' && (
+            <button
+              className="px-3 py-1 bg-gradient-to-r from-blue-400 to-blue-700 text-white rounded-lg shadow hover:from-blue-500 hover:to-blue-800 transition text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+              onClick={() => handleCancelBooking(params.row.id)}
+              disabled={cancelLoading}
+            >
+              {cancelLoading ? 'Đang hủy...' : 'Hủy'}
+            </button>
+          )}
+        </div>
       ),
       sortable: false,
       filterable: false,
@@ -121,7 +161,13 @@ function PatientBookingsPage() {
           </select>
         </div>
         {error && <div className="text-red-500 mb-4">{error}</div>}
-        <div style={{ height: 550, width: "100%" }}>
+        {cancelError && (
+          <div className="text-red-500 mb-4 text-center">{cancelError}</div>
+        )}
+        {cancelSuccess && (
+          <div className="text-green-600 mb-4 text-center">{cancelSuccess}</div>
+        )}
+        <div style={{ height: 550, width: '100%' }}>
           <DataGrid
             rows={filteredBookings}
             columns={columns}
@@ -131,21 +177,21 @@ function PatientBookingsPage() {
             getRowId={(row) => row.id}
             className="!border-blue-100"
             sx={{
-              "& .MuiDataGrid-columnHeaders": {
-                background: "#e0e7ff",
-                color: "#1e40af",
+              '& .MuiDataGrid-columnHeaders': {
+                background: '#e0e7ff',
+                color: '#1e40af',
                 fontWeight: 700,
                 fontSize: 16,
               },
-              "& .MuiDataGrid-row": {
-                background: "#f8fafc",
+              '& .MuiDataGrid-row': {
+                background: '#f8fafc',
                 borderRadius: 2,
               },
-              "& .MuiDataGrid-cell": {
+              '& .MuiDataGrid-cell': {
                 fontSize: 15,
               },
-              "& .MuiDataGrid-footerContainer": {
-                background: "#e0e7ff",
+              '& .MuiDataGrid-footerContainer': {
+                background: '#e0e7ff',
               },
             }}
           />

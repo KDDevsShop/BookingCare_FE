@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import doctorService from "../../services/doctor.service";
-import { CircularProgress } from "@mui/material";
+import React, { useEffect, useState } from 'react';
+import doctorService from '../../services/doctor.service';
+import { CircularProgress } from '@mui/material';
 
 const DoctorProfile = () => {
   let currentAccount = null;
   try {
-    currentAccount = JSON.parse(localStorage.getItem("account"));
+    currentAccount = JSON.parse(localStorage.getItem('account'));
   } catch {
     currentAccount = null;
   }
@@ -13,18 +13,18 @@ const DoctorProfile = () => {
   console.log(currentAccount);
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const baseUrl = "http://localhost:5000";
+  const [error, setError] = useState('');
+  const baseUrl = 'http://localhost:5000';
 
   useEffect(() => {
     const fetchDoctor = async () => {
       setLoading(true);
-      setError("");
+      setError('');
       try {
         const response = await doctorService.getDoctorById(doctorId);
         setDoctor(response.data || response);
       } catch (err) {
-        setError("Không thể tải thông tin bác sĩ.");
+        setError('Không thể tải thông tin bác sĩ.');
       } finally {
         setLoading(false);
       }
@@ -54,6 +54,7 @@ const DoctorProfile = () => {
 
   const {
     doctorName,
+    doctorTitle,
     doctorSortDesc,
     doctorDetailDesc,
     examinationPrice,
@@ -71,7 +72,7 @@ const DoctorProfile = () => {
           src={
             account?.userAvatar
               ? `${baseUrl}${account?.userAvatar}`
-              : "/public/DoctorLogin.png"
+              : '/public/DoctorLogin.png'
           }
           alt="Avatar"
           className="w-28 h-28 rounded-full object-cover border-4 border-blue-200 shadow"
@@ -83,47 +84,51 @@ const DoctorProfile = () => {
           <span>{doctorName}</span>
         </div>
         <div>
+          <span className="font-semibold text-blue-700">Chức danh: </span>
+          <span>{doctorTitle}</span>
+        </div>
+        <div>
           <span className="font-semibold text-blue-700">Chuyên khoa: </span>
-          <span>{specialty?.specialtyName || "-"}</span>
+          <span>{specialty?.specialtyName || '-'}</span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Giới tính: </span>
           <span>
             {account?.userGender === true
-              ? "Nam"
+              ? 'Nam'
               : account?.userGender === false
-              ? "Nữ"
-              : "Khác"}
+              ? 'Nữ'
+              : 'Khác'}
           </span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Ngày sinh: </span>
           <span>
             {account?.userDoB
-              ? new Date(account.userDoB).toLocaleDateString("vi-VN")
-              : "-"}
+              ? new Date(account.userDoB).toLocaleDateString('vi-VN')
+              : '-'}
           </span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Địa chỉ: </span>
-          <span>{account?.userAddress || "-"}</span>
+          <span>{account?.userAddress || '-'}</span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Giá khám: </span>
-          <span>{examinationPrice ? `${examinationPrice} VNĐ` : "-"}</span>
+          <span>{examinationPrice ? `${examinationPrice} VNĐ` : '-'}</span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Mô tả ngắn: </span>
-          <span>{doctorSortDesc || "-"}</span>
+          <span>{doctorSortDesc || '-'}</span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Mô tả chi tiết: </span>
-          <span>{doctorDetailDesc || "-"}</span>
+          <span>{doctorDetailDesc || '-'}</span>
         </div>
         <div className="flex justify-end mt-6">
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-            onClick={() => (window.location.href = "/doctor/profile/edit")}
+            onClick={() => (window.location.href = '/doctor/profile/edit')}
           >
             Chỉnh sửa
           </button>

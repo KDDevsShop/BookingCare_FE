@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -6,40 +6,45 @@ import {
   LogOut,
   GiftIcon,
   ListOrderedIcon,
-} from "lucide-react";
-import authService from "../services/auth.service";
+} from 'lucide-react';
+import authService from '../services/auth.service';
 
 const navItems = [
   {
-    label: "Dashboard",
+    label: 'Dashboard',
     icon: <LayoutDashboard size={18} />,
-    path: "/dashboard",
+    path: '/dashboard',
   },
-  { label: "Users", icon: <Users size={18} />, path: "/admin/users" },
+  { label: 'Users', icon: <Users size={18} />, path: '/admin/users' },
   {
-    label: "Product Types",
+    label: 'Product Types',
     icon: <Package size={18} />,
-    path: "/product-type",
+    path: '/product-type',
   },
   {
-    label: "Products",
+    label: 'Products',
     icon: <GiftIcon size={18} />,
-    path: "/admin/products",
+    path: '/admin/products',
   },
   {
-    label: "Orders",
+    label: 'Orders',
     icon: <ListOrderedIcon size={18} />,
-    path: "/admin/orders",
+    path: '/admin/orders',
   },
   {
-    label: "Doctors",
+    label: 'Quản lý bác sĩ',
     icon: <Users size={18} />,
-    path: "/admin/doctors",
+    path: '/admin/doctors',
   },
   {
-    label: "Specialties",
+    label: 'Quản lý chuyên khoa',
     icon: <Package size={18} />,
-    path: "/admin/specialties",
+    path: '/admin/specialties',
+  },
+  {
+    label: 'Quản lý  FAQs',
+    icon: <Package size={18} />,
+    path: '/admin/faqs',
   },
 ];
 
@@ -48,10 +53,10 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     authService.logout().then(() => {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("user");
-      window.location.href = "/";
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      window.location.href = '/';
     });
   };
 
@@ -67,8 +72,8 @@ const Sidebar = () => {
             to={item.path}
             className={`flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium ${
               location.pathname === item.path
-                ? "bg-indigo-100 text-indigo-600"
-                : "text-gray-600 hover:bg-gray-50"
+                ? 'bg-indigo-100 text-indigo-600'
+                : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
             {item.icon}

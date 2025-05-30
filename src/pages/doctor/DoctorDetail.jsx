@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import DoctorService from "../../services/doctor.service";
-import DoctorScheduleService from "../../services/doctorSchedule.service";
-import dayjs from "dayjs";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import DoctorService from '../../services/doctor.service';
+import DoctorScheduleService from '../../services/doctorSchedule.service';
+import dayjs from 'dayjs';
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = 'http://localhost:5000';
 
 function DoctorDetail() {
   const { id } = useParams();
@@ -14,7 +14,7 @@ function DoctorDetail() {
   const [error, setError] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [scheduleLoading, setScheduleLoading] = useState(true);
-  const [filterDate, setFilterDate] = useState("");
+  const [filterDate, setFilterDate] = useState('');
 
   useEffect(() => {
     async function fetchDoctor() {
@@ -22,7 +22,7 @@ function DoctorDetail() {
         const res = await DoctorService.getDoctorById(id);
         setDoctor(res);
       } catch {
-        setError("Không thể tải thông tin bác sĩ");
+        setError('Không thể tải thông tin bác sĩ');
       } finally {
         setLoading(false);
       }
@@ -38,7 +38,7 @@ function DoctorDetail() {
         console.log(res);
         setSchedules(res || []);
       } catch {
-        setError("Không thể tải lịch làm việc");
+        setError('Không thể tải lịch làm việc');
       } finally {
         setScheduleLoading(false);
       }
@@ -82,54 +82,52 @@ function DoctorDetail() {
             src={
               doctor.account?.userAvatar
                 ? `${baseUrl}${doctor.account.userAvatar}`
-                : "/public/DoctorLogin.png"
+                : '/public/DoctorLogin.png'
             }
             alt={doctor.doctorName}
             className="w-32 h-32 rounded-full object-cover border-4 border-blue-200 shadow mb-4 md:mb-0"
           />
           <div className="flex-1">
             <h2 className="text-3xl font-bold text-blue-800 mb-2">
+              <span>{doctor.doctorTitle} </span>
               {doctor.doctorName}
             </h2>
             <div className="text-blue-600 font-semibold mb-2">
               Giá khám: {Number(doctor.examinationPrice).toLocaleString()} VNĐ
             </div>
             <div className="text-gray-600 mb-2">
-              <span className="font-medium">Chuyên khoa:</span>{" "}
-              {doctor.specialty?.specialtyName || "-"}
+              <span className="font-medium">Chuyên khoa:</span>{' '}
+              {doctor.specialty?.specialtyName || '-'}
             </div>
             <div className="text-gray-600 mb-2">
-              <span className="font-medium">Giới tính:</span>{" "}
+              <span className="font-medium">Giới tính:</span>{' '}
               {doctor.account?.userGender === true ||
-              doctor.account?.userGender === "true"
-                ? "Nam"
+              doctor.account?.userGender === 'true'
+                ? 'Nam'
                 : doctor.account?.userGender === false ||
-                  doctor.account?.userGender === "false"
-                ? "Nữ"
-                : "-"}
+                  doctor.account?.userGender === 'false'
+                ? 'Nữ'
+                : '-'}
             </div>
 
             <div className="text-gray-600 mb-2">
-              <span className="font-medium">Ngày sinh:</span>{" "}
+              <span className="font-medium">Ngày sinh:</span>{' '}
               {doctor.account?.userDoB
                 ? new Date(doctor.account.userDoB).toLocaleDateString()
-                : "-"}
+                : '-'}
             </div>
             <div className="text-gray-600 mb-2">
-              <span className="font-medium">Địa chỉ:</span>{" "}
-              {doctor.account?.userAddress || "-"}
+              <span className="font-medium">Địa chỉ:</span>{' '}
+              {doctor.account?.userAddress || '-'}
             </div>
+
             <div className="text-gray-600 mb-2">
-              <span className="font-medium">Email:</span>{" "}
-              {doctor.account?.email || "-"}
-            </div>
-            <div className="text-gray-600 mb-2">
-              <span className="font-medium">Phương thức thanh toán:</span>{" "}
+              <span className="font-medium">Phương thức thanh toán:</span>{' '}
               {doctor.paymentMethods && doctor.paymentMethods.length > 0
                 ? doctor.paymentMethods
                     .map((pm) => pm.paymentMethodName)
-                    .join(", ")
-                : "-"}
+                    .join(', ')
+                : '-'}
             </div>
           </div>
         </div>
@@ -138,7 +136,7 @@ function DoctorDetail() {
             Giới thiệu
           </h3>
           <p className="text-gray-700 whitespace-pre-line bg-blue-50 rounded-lg p-4 border border-blue-100">
-            {doctor.doctorDetailDesc || "Chưa có mô tả chi tiết."}
+            {doctor.doctorDetailDesc || 'Chưa có mô tả chi tiết.'}
           </p>
         </div>
         {/* Doctor Schedule Section */}
@@ -175,7 +173,7 @@ function DoctorDetail() {
             {filterDate && (
               <button
                 className="ml-2 px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
-                onClick={() => setFilterDate("")}
+                onClick={() => setFilterDate('')}
               >
                 Xóa lọc
               </button>
@@ -209,10 +207,10 @@ function DoctorDetail() {
                       <td className="py-2 px-4 font-medium">{sch.workDate}</td>
                       <td className="py-2 px-4">
                         {sch.schedule?.startTime && sch.schedule?.endTime
-                          ? `  ${sch.schedule?.startTime || "-"} → ${
-                              sch.schedule?.endTime || "-"
+                          ? `  ${sch.schedule?.startTime || '-'} → ${
+                              sch.schedule?.endTime || '-'
                             }`
-                          : "-"}
+                          : '-'}
                       </td>
                       <td className="py-2 px-4 text-center">
                         {sch.currentPatients}
@@ -222,7 +220,7 @@ function DoctorDetail() {
                           <button
                             className="inline-block px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-semibold shadow hover:bg-blue-700 transition"
                             onClick={() =>
-                              navigate("/booking", {
+                              navigate('/booking', {
                                 state: { doctor, schedule: sch },
                               })
                             }

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import doctorService from "../../services/doctor.service";
+import React, { useEffect, useState, useRef } from 'react';
+import doctorService from '../../services/doctor.service';
 import {
   CircularProgress,
   Button,
@@ -11,53 +11,54 @@ import {
   Typography,
   Box,
   Paper,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const EditDoctorProfile = () => {
   let currentAccount = null;
   try {
-    currentAccount = JSON.parse(localStorage.getItem("account"));
+    currentAccount = JSON.parse(localStorage.getItem('account'));
   } catch {
     currentAccount = null;
   }
   const doctorId = currentAccount?.doctor?.id;
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [form, setForm] = useState({});
   const [avatarPreview, setAvatarPreview] = useState(
-    currentAccount?.userAvatar || "/public/DoctorLogin.png"
+    currentAccount?.userAvatar || '/public/DoctorLogin.png'
   );
   const [avatarFile, setAvatarFile] = useState(null);
   const avatarFileRef = useRef();
   const navigate = useNavigate();
-  const baseUrl = "http://localhost:5000";
+  const baseUrl = 'http://localhost:5000';
 
   useEffect(() => {
     const fetchDoctor = async () => {
       setLoading(true);
-      setError("");
+      setError('');
       try {
         const response = await doctorService.getDoctorById(doctorId);
         const data = response.data || response;
         console.log(data);
         setForm({
-          doctorName: data.doctorName || "",
-          doctorSortDesc: data.doctorSortDesc || "",
-          doctorDetailDesc: data.doctorDetailDesc || "",
-          examinationPrice: data.examinationPrice || "",
-          userGender: data.account?.userGender?.toString() || "true",
+          doctorName: data.doctorName || '',
+          doctorTitle: data.doctorTitle || '',
+          doctorSortDesc: data.doctorSortDesc || '',
+          doctorDetailDesc: data.doctorDetailDesc || '',
+          examinationPrice: data.examinationPrice || '',
+          userGender: data.account?.userGender?.toString() || 'true',
           userDoB: data.account?.userDoB
             ? data.account.userDoB.slice(0, 10)
-            : "",
-          userAddress: data.account?.userAddress || "",
-          username: data.account?.username || "",
-          email: data.account?.email || "",
+            : '',
+          userAddress: data.account?.userAddress || '',
+          username: data.account?.username || '',
+          email: data.account?.email || '',
         });
-        setAvatarPreview(data.account?.userAvatar || "/public/DoctorLogin.png");
+        setAvatarPreview(data.account?.userAvatar || '/public/DoctorLogin.png');
       } catch {
-        setError("Không thể tải thông tin bác sĩ.");
+        setError('Không thể tải thông tin bác sĩ.');
       } finally {
         setLoading(false);
       }
@@ -84,12 +85,13 @@ const EditDoctorProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
     try {
       const userAvatarFile = avatarFile;
       const updateData = {
         doctorName: form.doctorName,
+        doctorTitle: form.doctorTitle || '',
         doctorSortDesc: form.doctorSortDesc,
         doctorDetailDesc: form.doctorDetailDesc,
         examinationPrice: form.examinationPrice,
@@ -98,10 +100,10 @@ const EditDoctorProfile = () => {
         userAddress: form.userAddress,
       };
       await doctorService.updateDoctor(doctorId, updateData, userAvatarFile);
-      setSuccess("Cập nhật thành công!");
-      setTimeout(() => navigate("/doctor/profile"), 1200);
+      setSuccess('Cập nhật thành công!');
+      setTimeout(() => navigate('/doctor/profile'), 1200);
     } catch {
-      setError("Cập nhật thất bại. Vui lòng thử lại.");
+      setError('Cập nhật thất bại. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -139,7 +141,7 @@ const EditDoctorProfile = () => {
           <Box className="flex flex-col items-center mb-4">
             <Avatar
               src={
-                avatarPreview?.startsWith("blob:")
+                avatarPreview?.startsWith('blob:')
                   ? avatarPreview
                   : `${baseUrl}${avatarPreview}`
               }
@@ -190,6 +192,16 @@ const EditDoctorProfile = () => {
             margin="normal"
           />
           <TextField
+            label="Chức danh"
+            name="doctorTitle"
+            value={form.doctorTitle || ''}
+            onChange={handleChange}
+            fullWidth
+            InputProps={{ readOnly: true }}
+            required
+            margin="normal"
+          />
+          <TextField
             label="Mô tả ngắn"
             name="doctorSortDesc"
             value={form.doctorSortDesc}
@@ -213,6 +225,7 @@ const EditDoctorProfile = () => {
             value={form.examinationPrice}
             onChange={handleChange}
             fullWidth
+            InputProps={{ readOnly: true }}
             margin="normal"
             type="number"
           />
@@ -221,7 +234,7 @@ const EditDoctorProfile = () => {
             <RadioGroup
               row
               name="userGender"
-              value={form.userGender === "true" ? "true" : "false"}
+              value={form.userGender === 'true' ? 'true' : 'false'}
               onChange={handleChange}
             >
               <FormControlLabel value="true" control={<Radio />} label="Nam" />
@@ -260,7 +273,7 @@ const EditDoctorProfile = () => {
             <Button
               variant="outlined"
               color="secondary"
-              onClick={() => navigate("/doctor/profile")}
+              onClick={() => navigate('/doctor/profile')}
               size="large"
               sx={{ minWidth: 140 }}
             >

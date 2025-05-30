@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import DoctorService from "../../services/doctor.service";
-import DataTable from "../../components/DataTable";
+import React, { useEffect, useState } from 'react';
+import DoctorService from '../../services/doctor.service';
+import DataTable from '../../components/DataTable';
 import {
   Box,
   Typography,
@@ -12,60 +12,60 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
-import DoctorForm from "./DoctorForm";
-import SpecialtyService from "../../services/specialty.service";
-import AuthService from "../../services/auth.service";
-import { ToVietnamCurrencyFormat } from "../../utils/ToVietnamCurrencyFormat";
+} from '@mui/material';
+import DoctorForm from './DoctorForm';
+import SpecialtyService from '../../services/specialty.service';
+import AuthService from '../../services/auth.service';
+import { ToVietnamCurrencyFormat } from '../../utils/ToVietnamCurrencyFormat';
 
 const columns = [
   {
-    field: "id",
-    headerName: "ID",
+    field: 'id',
+    headerName: 'ID',
     width: 70,
-    align: "center",
-    headerAlign: "center",
+    align: 'center',
+    headerAlign: 'center',
   },
   {
-    field: "avatar",
-    headerName: "Ảnh đại diện",
+    field: 'avatar',
+    headerName: 'Ảnh đại diện',
     width: 200,
-    align: "center",
-    headerAlign: "center",
+    align: 'center',
+    headerAlign: 'center',
     renderCell: (params) => (
       <Avatar
         src={
           params.row.account?.userAvatar
             ? `http://localhost:5000${params.row.account.userAvatar}`
-            : "/DoctorLogin.png"
+            : '/DoctorLogin.png'
         }
         alt={params.row.doctorName}
-        sx={{ width: 48, height: 48, margin: "auto" }}
+        sx={{ width: 48, height: 48, margin: 'auto' }}
       />
     ),
     sortable: false,
     filterable: false,
   },
   {
-    field: "doctorName",
-    headerName: "Tên bác sĩ",
+    field: 'doctorName',
+    headerName: 'Tên bác sĩ',
     flex: 1.2,
     minWidth: 160,
   },
   {
-    field: "doctorSortDesc",
-    headerName: "Mô tả ngắn",
+    field: 'doctorSortDesc',
+    headerName: 'Mô tả ngắn',
     flex: 1.5,
     minWidth: 180,
   },
   {
-    field: "examinationPrice",
-    headerName: "Giá khám (VNĐ)",
+    field: 'examinationPrice',
+    headerName: 'Giá khám (VNĐ)',
     flex: 1,
     minWidth: 120,
     valueFormatter: (params) => {
       console.log(params);
-      return params ? Number(params).toLocaleString() : "-";
+      return params ? Number(params).toLocaleString() : '-';
     },
   },
   // {
@@ -79,7 +79,7 @@ const columns = [
 
 const DoctorListAdmin = () => {
   const [doctors, setDoctors] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [openForm, setOpenForm] = useState(false);
   const [editDoctor, setEditDoctor] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -96,7 +96,7 @@ const DoctorListAdmin = () => {
       console.log(res);
       setDoctors(res || []);
     } catch {
-      setError("Không thể tải danh sách bác sĩ");
+      setError('Không thể tải danh sách bác sĩ');
     }
   };
 
@@ -117,6 +117,11 @@ const DoctorListAdmin = () => {
   const handleCreate = () => {
     setEditDoctor(null);
     setOpenForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+    setEditDoctor(null);
   };
 
   const handleEdit = (params) => {
@@ -144,7 +149,7 @@ const DoctorListAdmin = () => {
       setOpenForm(false);
       fetchDoctors();
     } catch {
-      setError("Không thể lưu bác sĩ");
+      setError('Không thể lưu bác sĩ');
     } finally {
       setLoading(false);
     }
@@ -157,7 +162,7 @@ const DoctorListAdmin = () => {
       setConfirmDelete({ open: false, doctor: null });
       fetchDoctors();
     } catch {
-      setError("Không thể xoá bác sĩ");
+      setError('Không thể xoá bác sĩ');
     } finally {
       setLoading(false);
     }
@@ -166,11 +171,11 @@ const DoctorListAdmin = () => {
   const actionColumns = [
     ...columns,
     {
-      field: "actions",
-      headerName: "Chức năng",
+      field: 'actions',
+      headerName: 'Chức năng',
       flex: 1.5,
-      align: "center",
-      headerAlign: "center",
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Stack direction="row" spacing={1} padding={1} justifyContent="center">
           <Button
@@ -207,8 +212,8 @@ const DoctorListAdmin = () => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%)",
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%)',
         p: 4,
       }}
     >
@@ -245,7 +250,7 @@ const DoctorListAdmin = () => {
         />
         <DoctorForm
           open={openForm}
-          onClose={() => setOpenForm(false)}
+          onClose={handleCloseForm}
           onSubmit={handleFormSubmit}
           doctor={editDoctor}
           specialties={specialties}
@@ -265,13 +270,14 @@ const DoctorListAdmin = () => {
                   src={
                     viewDoctor.account?.userAvatar
                       ? `http://localhost:5000${viewDoctor.account.userAvatar}`
-                      : "/DoctorLogin.png"
+                      : '/DoctorLogin.png'
                   }
-                  sx={{ width: 80, height: 80, mx: "auto" }}
+                  sx={{ width: 80, height: 80, mx: 'auto' }}
                 />
                 <Typography variant="h6" textAlign="center">
-                  {viewDoctor.doctorName}
+                  <span>{viewDoctor.doctorTitle} </span> {viewDoctor.doctorName}
                 </Typography>
+
                 <Typography textAlign="center">
                   {viewDoctor.doctorSortDesc}
                 </Typography>
@@ -279,43 +285,43 @@ const DoctorListAdmin = () => {
                   Mô tả chi tiết: {viewDoctor.doctorDetailDesc}
                 </Typography>
                 <Typography>
-                  Giá khám:{" "}
+                  Giá khám:{' '}
                   {Number(viewDoctor.examinationPrice).toLocaleString()} VNĐ
                 </Typography>
                 <Typography>
-                  Phương thức thanh toán:{" "}
+                  Phương thức thanh toán:{' '}
                   {viewDoctor.paymentMethods &&
                   viewDoctor.paymentMethods.length > 0
                     ? viewDoctor.paymentMethods
                         .map((pm) => pm.paymentMethodName)
-                        .join(", ")
-                    : "-"}
+                        .join(', ')
+                    : '-'}
                 </Typography>
                 <Typography>
-                  Chuyên khoa: {viewDoctor.specialty?.specialtyName || "-"}
+                  Chuyên khoa: {viewDoctor.specialty?.specialtyName || '-'}
                 </Typography>
                 <Typography>
                   Tài khoản: {viewDoctor.account?.username} (
                   {viewDoctor.account?.email})
                 </Typography>
                 <Typography>
-                  Giới tính:{" "}
+                  Giới tính:{' '}
                   {viewDoctor.account?.userGender === true ||
-                  viewDoctor.account?.userGender === "true"
-                    ? "Nam"
+                  viewDoctor.account?.userGender === 'true'
+                    ? 'Nam'
                     : viewDoctor.account?.userGender === false ||
-                      viewDoctor.account?.userGender === "false"
-                    ? "Nữ"
-                    : "-"}
+                      viewDoctor.account?.userGender === 'false'
+                    ? 'Nữ'
+                    : '-'}
                 </Typography>
                 <Typography>
-                  Ngày sinh:{" "}
+                  Ngày sinh:{' '}
                   {viewDoctor.account?.userDoB
                     ? new Date(viewDoctor.account.userDoB).toLocaleDateString()
-                    : "-"}
+                    : '-'}
                 </Typography>
                 <Typography>
-                  Địa chỉ: {viewDoctor.account?.userAddress || "-"}
+                  Địa chỉ: {viewDoctor.account?.userAddress || '-'}
                 </Typography>
               </Box>
             )}

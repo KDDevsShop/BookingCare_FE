@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import DoctorService from '../../services/doctor.service';
+import SpecialtyService from '../../services/specialty.service';
 
 const baseUrl = 'http://localhost:5000';
 
-function DoctorList() {
-  const [doctors, setDoctors] = useState([]);
+function SpecialtyListPatient() {
+  const [specialties, setSpecialties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -13,33 +13,33 @@ function DoctorList() {
   const search = location.state?.search || '';
 
   useEffect(() => {
-    async function fetchDoctors() {
+    async function fetchSpecialties() {
       try {
-        const res = await DoctorService.getAllDoctors();
-        setDoctors(res || []);
+        const res = await SpecialtyService.getAllSpecialties();
+        setSpecialties(res || []);
       } catch {
-        setError('Failed to fetch doctors');
+        setError('Failed to fetch specialties');
       } finally {
         setLoading(false);
       }
     }
-    fetchDoctors();
+    fetchSpecialties();
   }, []);
 
-  let filteredDoctors = doctors;
+  let filteredSpecialties = specialties;
   if (search) {
-    // Normalize search input and doctor names for accent insensitivity
     const normalizedSearch = search
       .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-    const searchRegex = new RegExp(normalizedSearch, 'i'); // "i" for case insensitive
+      .normalize('NFD') // splits accented characters into base + diacritic
+      .replace(/[\u0300-\u036f]/g, ''); // removes diacritics
 
-    filteredDoctors = doctors.filter((doctor) =>
-      searchRegex.test(
-        doctor.doctorName?.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      )
-    );
+    filteredSpecialties = specialties.filter((spec) => {
+      const normalizedSpecName = spec.specialtyName
+        ?.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      return normalizedSpecName?.includes(normalizedSearch);
+    });
   }
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
@@ -50,7 +50,7 @@ function DoctorList() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-10">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl font-bold text-blue-700 mb-8 text-center">
-          Danh sách bác sĩ
+          Danh sách chuyên khoa
         </h2>
         {search && (
           <div className="text-center text-blue-600 mb-4">
@@ -59,44 +59,37 @@ function DoctorList() {
           </div>
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredDoctors.length === 0 ? (
+          {filteredSpecialties.length === 0 ? (
             <div className="col-span-full text-center text-gray-500">
-              Không tìm thấy bác sĩ phù hợp.
+              Không tìm thấy chuyên khoa phù hợp.
             </div>
           ) : (
-            filteredDoctors.map((doctor) => (
+            filteredSpecialties.map((spec) => (
               <div
-                key={doctor.id}
+                key={spec.id}
                 className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow p-6 flex flex-col items-center border border-blue-100 cursor-pointer"
-                onClick={() => navigate(`/doctors/${doctor.id}`)}
+                onClick={() => navigate(`/specialties/${spec.id}`)}
               >
                 <img
                   src={
-                    doctor.account?.userAvatar
-                      ? `${baseUrl}${doctor.account.userAvatar}`
+                    spec.specialtyImage
+                      ? `${baseUrl}${spec.specialtyImage}`
                       : '/public/DoctorLogin.png'
                   }
-                  alt={doctor.doctorName}
+                  alt={spec.specialtyName}
                   className="w-24 h-24 rounded-full object-cover border-4 border-blue-200 mb-4 shadow"
                 />
                 <h3 className="text-xl font-semibold text-blue-800 mb-1">
-                  <span>{doctor.doctorTitle} </span> {doctor.doctorName}
+                  {spec.specialtyName}
                 </h3>
-                <p className="text-gray-600 mb-2 text-center">
-                  {doctor.doctorSortDesc}
+                <p className="text-gray-600 mb-2 text-center line-clamp-3">
+                  {spec.specialtyDesc}
                 </p>
-                <div className="text-blue-600 font-bold mb-2">
-                  Giá khám: {Number(doctor.examinationPrice).toLocaleString()}{' '}
-                  VNĐ
-                </div>
-                <div className="text-sm text-gray-500 mb-2">
-                  Chuyên khoa: {doctor.specialty?.specialtyName || '-'}
-                </div>
                 <button
                   className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/doctors/${doctor.id}`);
+                    navigate(`/specialties/${spec.id}`);
                   }}
                 >
                   Xem chi tiết
@@ -110,4 +103,4 @@ function DoctorList() {
   );
 }
 
-export default DoctorList;
+export default SpecialtyListPatient;

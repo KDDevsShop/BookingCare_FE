@@ -20,6 +20,10 @@ import BookingPage from './pages/booking/BookingPage';
 import BookingDetailPage from './pages/booking/BookingDetailPage';
 import PatientBookingsPage from './pages/booking/PatientBookingsPage';
 import Dashboard from './pages/admin/Dashboard';
+import SpecialtyListPatient from './pages/specialty/SpecialtyListPatient';
+import SpecialtyDetail from './pages/specialty/SpecialtyDetail';
+import FAQListAdmin from './pages/admin/FAQListAdmin';
+import FAQListPatient from './pages/patient/FAQListPatient';
 
 function App() {
   return (
@@ -73,6 +77,14 @@ function App() {
           element={
             <AdminLayout>
               <SpecialtyList />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/faqs"
+          element={
+            <AdminLayout>
+              <FAQListAdmin />
             </AdminLayout>
           }
         />
@@ -134,6 +146,30 @@ function App() {
           element={
             <CustomerLayout>
               <PatientBookingsPage />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/specialties"
+          element={
+            <CustomerLayout>
+              <SpecialtyListPatient />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/specialties/:id"
+          element={
+            <CustomerLayout>
+              <SpecialtyDetail />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/faqs"
+          element={
+            <CustomerLayout>
+              <FAQListPatient />
             </CustomerLayout>
           }
         />

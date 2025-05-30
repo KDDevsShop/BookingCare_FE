@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -14,23 +14,24 @@ import {
   FormControl,
   InputLabel,
   Select,
-} from "@mui/material";
-import DoctorService from "../../services/doctor.service";
-import PaymentMethodService from "../../services/paymentMethod.service";
+} from '@mui/material';
+import DoctorService from '../../services/doctor.service';
+import PaymentMethodService from '../../services/paymentMethod.service';
 
 const initialState = {
-  doctorName: "",
-  doctorSortDesc: "",
-  doctorDetailDesc: "",
-  examinationPrice: "",
-  specialtyId: "",
+  doctorName: '',
+  doctorTitle: '',
+  doctorSortDesc: '',
+  doctorDetailDesc: '',
+  examinationPrice: '',
+  specialtyId: '',
   // Account fields
-  username: "",
-  password: "",
-  email: "",
-  userGender: true,
-  userDoB: "",
-  userAddress: "",
+  username: '',
+  password: '',
+  email: '',
+  userGender: '',
+  userDoB: '',
+  userAddress: '',
 };
 
 const DoctorForm = ({
@@ -43,46 +44,47 @@ const DoctorForm = ({
 }) => {
   const [form, setForm] = useState(initialState);
   const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState('');
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
 
   useEffect(() => {
     if (doctor) {
       setForm({
-        doctorName: doctor.doctorName || "",
-        doctorSortDesc: doctor.doctorSortDesc || "",
-        doctorDetailDesc: doctor.doctorDetailDesc || "",
-        examinationPrice: doctor.examinationPrice || "",
-        specialtyId: doctor.specialty?.id || doctor.specialtyId || "",
+        doctorName: doctor.doctorName || '',
+        doctorTitle: doctor.doctorTitle || '',
+        doctorSortDesc: doctor.doctorSortDesc || '',
+        doctorDetailDesc: doctor.doctorDetailDesc || '',
+        examinationPrice: doctor.examinationPrice || '',
+        specialtyId: doctor.specialty?.id || doctor.specialtyId || '',
         username:
           doctor.account && doctor.account.username
             ? doctor.account.username
-            : "",
-        password: "", // Don't prefill password
+            : '',
+        password: '', // Don't prefill password
         email:
-          doctor.account && doctor.account.email ? doctor.account.email : "",
+          doctor.account && doctor.account.email ? doctor.account.email : '',
         userGender:
-          doctor.account && typeof doctor.account.userGender !== "undefined"
-            ? doctor.account.userGender
-            : true,
+          doctor.account && typeof doctor.account.userGender !== 'undefined'
+            ? doctor.account.userGender.toString()
+            : 'true',
         userDoB:
           doctor.account && doctor.account.userDoB
             ? doctor.account.userDoB.slice(0, 10)
-            : "",
+            : '',
         userAddress:
           doctor.account && doctor.account.userAddress
             ? doctor.account.userAddress
-            : "",
+            : '',
       });
       setAvatarPreview(
         doctor.account && doctor.account.userAvatar
           ? `http://localhost:5000${doctor.account.userAvatar}`
-          : ""
+          : ''
       );
     } else {
       setForm(initialState);
-      setAvatarPreview("");
+      setAvatarPreview('');
     }
     setAvatarFile(null);
   }, [doctor]);
@@ -110,18 +112,18 @@ const DoctorForm = ({
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-    setForm({ ...form, [name]: type === "radio" ? value === "true" : value });
+    setForm({ ...form, [name]: type === 'radio' ? value === 'true' : value });
   };
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     setAvatarFile(file);
-    setAvatarPreview(file ? URL.createObjectURL(file) : "");
+    setAvatarPreview(file ? URL.createObjectURL(file) : '');
   };
 
   const handlePaymentChange = (e) => {
     const value = e.target.value;
-    setSelectedPayments(typeof value === "string" ? value.split(",") : value);
+    setSelectedPayments(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleSubmit = (e) => {
@@ -132,9 +134,9 @@ const DoctorForm = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle
-        sx={{ fontWeight: 700, color: "primary.main", textAlign: "center" }}
+        sx={{ fontWeight: 700, color: 'primary.main', textAlign: 'center' }}
       >
-        {doctor ? "Cập nhật bác sĩ" : "Thêm bác sĩ mới"}
+        {doctor ? 'Cập nhật bác sĩ' : 'Thêm bác sĩ mới'}
       </DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent dividers>
@@ -142,14 +144,14 @@ const DoctorForm = ({
             <Box display="flex" alignItems="center" gap={2}>
               <Avatar
                 src={avatarPreview}
-                sx={{ width: 64, height: 64, border: "2px solid #6366f1" }}
+                sx={{ width: 64, height: 64, border: '2px solid #6366f1' }}
               />
               <Button
                 variant="outlined"
                 component="label"
                 sx={{ borderRadius: 2 }}
               >
-                {avatarPreview ? "Đổi ảnh đại diện" : "Chọn ảnh đại diện"}
+                {avatarPreview ? 'Đổi ảnh đại diện' : 'Chọn ảnh đại diện'}
                 <input
                   type="file"
                   accept="image/*"
@@ -162,6 +164,14 @@ const DoctorForm = ({
               label="Tên bác sĩ"
               name="doctorName"
               value={form.doctorName}
+              onChange={handleChange}
+              required
+              fullWidth
+            />
+            <TextField
+              label="Chức danh"
+              name="doctorTitle"
+              value={form.doctorTitle}
               onChange={handleChange}
               required
               fullWidth
@@ -189,7 +199,6 @@ const DoctorForm = ({
               onChange={handleChange}
               required
               fullWidth
-              type="number"
             />
             <TextField
               select
@@ -222,7 +231,7 @@ const DoctorForm = ({
                   paymentMethods
                     .filter((pm) => selected.includes(pm.id))
                     .map((pm) => pm.paymentMethodName)
-                    .join(", ") || "Chọn phương thức thanh toán"
+                    .join(', ') || 'Chọn phương thức thanh toán'
                 }
                 name="paymentMethodIds"
               >
@@ -291,8 +300,8 @@ const DoctorForm = ({
               onChange={handleChange}
               fullWidth
             >
-              <MenuItem value={true}>Nam</MenuItem>
-              <MenuItem value={false}>Nữ</MenuItem>
+              <MenuItem value={'true'}>Nam</MenuItem>
+              <MenuItem value={'false'}>Nữ</MenuItem>
             </TextField>
           </Box>
         </DialogContent>
@@ -302,9 +311,9 @@ const DoctorForm = ({
             {loading ? (
               <CircularProgress size={24} />
             ) : doctor ? (
-              "Cập nhật"
+              'Cập nhật'
             ) : (
-              "Thêm mới"
+              'Thêm mới'
             )}
           </Button>
         </DialogActions>
