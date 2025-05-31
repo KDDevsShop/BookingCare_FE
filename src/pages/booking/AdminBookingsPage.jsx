@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BookingService from '../../services/booking.service';
-import { useNavigate, useParams } from 'react-router-dom';
-import { DataGrid } from '@mui/x-data-grid';
+import DataTable from '../../components/DataTable';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const statusColors = {
@@ -11,33 +11,29 @@ const statusColors = {
   'Đã hoàn thành': 'bg-gray-100 text-gray-700',
 };
 
-function BookingHistoryPatient() {
-  const navigate = useNavigate();
-  const { id } = useParams();
+function AdminBookingsPage() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState(null);
-  const [cancelSuccess, setCancelSuccess] = useState(null);
-  const role = JSON.parse(localStorage.getItem('user'))?.role.role || '';
+  const navigate = useNavigate();
 
-  console.log(role);
   useEffect(() => {
     async function fetchBookings() {
       setLoading(true);
       try {
-        const res = await BookingService.getAllBookingsByPatientId(id);
+        const res = await BookingService.getAllBookings();
         setBookings(res || []);
       } catch {
-        setError('Không thể tải danh sách đặt lịch.');
+        setError('Không thể tải danh sách lịch khám.');
       } finally {
         setLoading(false);
       }
     }
     fetchBookings();
-  }, [id]);
+  }, []);
 
   const filteredBookings = statusFilter
     ? bookings.filter((b) => b.bookingStatus === statusFilter)
@@ -46,22 +42,19 @@ function BookingHistoryPatient() {
   const handleCancelBooking = async (bookingId) => {
     setCancelLoading(true);
     setCancelError(null);
-    setCancelSuccess(null);
     try {
-      const res = await BookingService.cancelBooking(bookingId);
-      const msg = res?.message;
-      if (msg === 'Bạn chỉ có thể hủy lịch trước giờ hẹn ít nhất 1 tiếng.') {
-        toast.error(msg);
-      } else {
-        toast.success('Đã hủy lịch thành công.');
-        setBookings((prev) =>
-          prev.map((b) =>
-            b.id === bookingId ? { ...b, bookingStatus: 'Đã hủy' } : b
-          )
-        );
-      }
+      await BookingService.cancelBooking(bookingId);
+      toast.success('Đã hủy lịch thành công.');
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === bookingId ? { ...b, bookingStatus: 'Đã hủy' } : b
+        )
+      );
     } catch (error) {
-      setCancelError('Không thể hủy lịch khám. Vui lòng thử lại.');
+      setCancelError(
+        error?.response?.data?.message ||
+          'Không thể hủy lịch khám. Vui lòng thử lại.'
+      );
     } finally {
       setCancelLoading(false);
     }
@@ -69,6 +62,12 @@ function BookingHistoryPatient() {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
+    {
+      field: 'patientName',
+      headerName: 'Bệnh nhân',
+      flex: 1.5,
+      renderCell: (params) => params.row.patient?.patientName || '-',
+    },
     {
       field: 'doctorName',
       headerName: 'Bác sĩ',
@@ -105,22 +104,17 @@ function BookingHistoryPatient() {
     {
       field: 'actions',
       headerName: 'Chức năng',
-      width: 180,
+      width: 200,
       renderCell: (params) => (
         <div className="flex gap-2 p-3">
           <button
             className="px-3 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-sm font-semibold"
-            onClick={() => {
-              if (role === 'admin') {
-                navigate(`/admin/booking-history/${params.row.id}`);
-              } else {
-                navigate(`/doctor/booking-history/${params.row.id}`);
-              }
-            }}
+            onClick={() => navigate(`/admin/booking/${params.row.id}`)}
           >
             Xem
           </button>
-          {params.row.bookingStatus === 'Chờ xác nhận' && (
+          {(params.row.bookingStatus === 'Chờ xác nhận' ||
+            params.row.bookingStatus === 'Đã xác nhận') && (
             <button
               className="px-3 py-1 bg-gradient-to-r from-blue-400 to-blue-700 text-white rounded-lg shadow hover:from-blue-500 hover:to-blue-800 transition text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
               onClick={() => handleCancelBooking(params.row.id)}
@@ -140,8 +134,9 @@ function BookingHistoryPatient() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-10">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
         <h2 className="text-2xl font-bold text-blue-800 mb-6">
-          Lịch sử đặt khám của bệnh nhân
+          Quản lý lịch khám
         </h2>
+        {/* Filter by bookingStatus */}
         <div className="mb-4 flex flex-col md:flex-row md:items-center gap-4">
           <label className="font-medium text-blue-700">
             Lọc theo trạng thái:
@@ -159,39 +154,14 @@ function BookingHistoryPatient() {
           </select>
         </div>
         {error && <div className="text-red-500 mb-4">{error}</div>}
-        {cancelError && (
-          <div className="text-red-500 mb-4 text-center">{cancelError}</div>
-        )}
-        {cancelSuccess && (
-          <div className="text-green-600 mb-4 text-center">{cancelSuccess}</div>
-        )}
         <div style={{ height: 550, width: '100%' }}>
-          <DataGrid
+          <DataTable
             rows={filteredBookings}
             columns={columns}
             pageSize={8}
-            rowsPerPageOptions={[8, 16, 32]}
+            checkboxSelection={false}
+            disableSelectionOnClick={true}
             loading={loading}
-            getRowId={(row) => row.id}
-            className="!border-blue-100"
-            sx={{
-              '& .MuiDataGrid-columnHeaders': {
-                background: '#e0e7ff',
-                color: '#1e40af',
-                fontWeight: 700,
-                fontSize: 16,
-              },
-              '& .MuiDataGrid-row': {
-                background: '#f8fafc',
-                borderRadius: 2,
-              },
-              '& .MuiDataGrid-cell': {
-                fontSize: 15,
-              },
-              '& .MuiDataGrid-footerContainer': {
-                background: '#e0e7ff',
-              },
-            }}
           />
         </div>
       </div>
@@ -199,4 +169,4 @@ function BookingHistoryPatient() {
   );
 }
 
-export default BookingHistoryPatient;
+export default AdminBookingsPage;

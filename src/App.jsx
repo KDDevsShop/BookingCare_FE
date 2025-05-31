@@ -29,6 +29,8 @@ import DoctorBookingsPage from './pages/booking/DoctorBookingsPage';
 import BookingDetailDoctor from './pages/booking/BookingDetailDoctor';
 import BookingHistoryPatient from './pages/booking/BookingHistoryPatient';
 import BookingConfirmPage from './pages/booking/BookingConfirmPage';
+import PatientListAdmin from './pages/admin/PatientListAdmin';
+import AdminBookingsPage from './pages/booking/AdminBookingsPage';
 
 function App() {
   return (
@@ -93,24 +95,65 @@ function App() {
             </AdminLayout>
           }
         />
+        <Route
+          path="/admin/patients"
+          element={
+            <AdminLayout>
+              <PatientListAdmin />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/bookings"
+          element={
+            <AdminLayout>
+              <AdminBookingsPage />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/booking/:id"
+          element={
+            <AdminLayout>
+              <BookingDetailDoctor />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/patients/:id/bookings"
+          element={
+            <AdminLayout>
+              <BookingHistoryPatient />
+            </AdminLayout>
+          }
+        />
+
+        <Route
+          path="/admin/booking-history/:id"
+          element={
+            <AdminLayout>
+              <BookingDetailPage />
+            </AdminLayout>
+          }
+        />
 
         {/* Doctor Routes */}
 
         <Route
           path="/doctor/profile"
           element={
-            <CustomerLayout>
+            <DoctorLayout>
               <DoctorProfile />
-            </CustomerLayout>
+            </DoctorLayout>
           }
         />
         <Route
           path="/doctor/profile/edit"
           element={
-            <CustomerLayout>
+            <DoctorLayout>
               {/* Edit profile page */}
               <EditDoctorProfile />
-            </CustomerLayout>
+            </DoctorLayout>
           }
         />
 

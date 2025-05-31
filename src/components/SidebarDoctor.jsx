@@ -1,11 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
-  Users,
-  Package,
   LogOut,
-  GiftIcon,
-  ListOrderedIcon,
   BriefcaseMedical,
 } from 'lucide-react';
 import authService from '../services/auth.service';
@@ -13,14 +9,14 @@ import DoctorBookingsPage from '../pages/booking/DoctorBookingsPage';
 
 const navItems = [
   {
+    label: 'Hồ sơ cá nhân',
+    icon: <LayoutDashboard size={18} />,
+    path: '/doctor/profile',
+  },
+  {
     label: 'Quản lý lịch khám',
     icon: <BriefcaseMedical size={18} />,
     path: '/doctor/bookings',
-  },
-  {
-    label: 'Quản lý ca làm việc',
-    icon: <Users size={18} />,
-    path: '/admin/users',
   },
 ];
 

@@ -2,9 +2,11 @@ import React from 'react';
 
 function PrescriptionDetail({ prescription, onEdit, onSendEmail, isSent }) {
   const baseUrl = 'http://localhost:5000';
+  const role = JSON.parse(localStorage.getItem('user'))?.role.role || '';
   const firstPrescription = Array.isArray(prescription)
     ? prescription[0]
     : prescription;
+  console.log(role);
 
   if (!firstPrescription) {
     return (
@@ -29,7 +31,7 @@ function PrescriptionDetail({ prescription, onEdit, onSendEmail, isSent }) {
           className="w-full rounded-lg border border-blue-200 mb-4 shadow"
         />
       )}
-      {!isSent && (
+      {!isSent && role !== 'admin' && (
         <div className="flex gap-4 mt-4 justify-center">
           <div>{!isSent}</div>
           <button

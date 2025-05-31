@@ -22,6 +22,8 @@ function BookingDetailDoctor() {
   const [prescriptionError, setPrescriptionError] = useState(null);
   const [emailSuccess, setEmailSuccess] = useState(null);
   const [emailError, setEmailError] = useState(null);
+  const role = JSON.parse(localStorage.getItem('user'))?.role.role || '';
+  console.log(role);
 
   useEffect(() => {
     async function fetchBooking() {
@@ -199,7 +201,7 @@ function BookingDetailDoctor() {
       <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
         <button
           className="mb-6 text-blue-600 hover:underline flex items-center"
-          onClick={() => navigate('/doctor/bookings')}
+          onClick={() => navigate(-1)}
         >
           <svg
             className="w-5 h-5 mr-2"
@@ -230,9 +232,13 @@ function BookingDetailDoctor() {
             </span>
             <button
               className="ml-3 text-xs text-blue-600 underline hover:text-blue-800"
-              onClick={() =>
-                navigate(`/patients/${booking.patientId}/bookings`)
-              }
+              onClick={() => {
+                if (role === 'admin') {
+                  navigate(`/admin/patients/${booking.patientId}/bookings`);
+                } else {
+                  navigate(`/patients/${booking.patientId}/bookings`);
+                }
+              }}
             >
               Xem lịch sử đặt khám
             </button>

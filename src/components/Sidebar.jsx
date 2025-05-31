@@ -15,22 +15,6 @@ const navItems = [
     icon: <LayoutDashboard size={18} />,
     path: '/dashboard',
   },
-  { label: 'Users', icon: <Users size={18} />, path: '/admin/users' },
-  {
-    label: 'Product Types',
-    icon: <Package size={18} />,
-    path: '/product-type',
-  },
-  {
-    label: 'Products',
-    icon: <GiftIcon size={18} />,
-    path: '/admin/products',
-  },
-  {
-    label: 'Orders',
-    icon: <ListOrderedIcon size={18} />,
-    path: '/admin/orders',
-  },
   {
     label: 'Quản lý bác sĩ',
     icon: <Users size={18} />,
@@ -45,6 +29,16 @@ const navItems = [
     label: 'Quản lý  FAQs',
     icon: <Package size={18} />,
     path: '/admin/faqs',
+  },
+  {
+    label: 'Quản lý bệnh nhân',
+    icon: <Users size={18} />,
+    path: '/admin/patients',
+  },
+  {
+    label: 'Quản lý lịch khám',
+    icon: <ListOrderedIcon size={18} />,
+    path: '/admin/bookings',
   },
 ];
 

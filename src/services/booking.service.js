@@ -43,6 +43,11 @@ class BookingService {
       }
     );
   }
+
+  // Get all bookings (admin)
+  async getAllBookings() {
+    return this.api.request(`/`, 'GET');
+  }
 }
 
 export default new BookingService();
