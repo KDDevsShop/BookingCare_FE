@@ -24,6 +24,25 @@ class BookingService {
   async cancelBooking(id) {
     return this.api.request(`/${id}/cancel`, 'PATCH');
   }
+
+  // Add a method to get all bookings by doctorId
+  async getAllBookingsByDoctorId(doctorId) {
+    return this.api.request(`/doctor/${doctorId}`, 'GET');
+  }
+
+  // Confirm a booking by id
+  async confirmBooking(bookingId) {
+    return this.api.request(
+      `/confirm`,
+      'PUT',
+      { bookingId },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  }
 }
 
 export default new BookingService();

@@ -31,7 +31,7 @@ const Login = () => {
         if (response.account?.role === 'admin') {
           navigate('/dashboard');
         } else if (response.account?.role === 'doctor') {
-          navigate('/doctor/profile');
+          navigate('/doctor/bookings');
         } else if (response.account?.role === 'patient') {
           navigate('/homepage');
         }

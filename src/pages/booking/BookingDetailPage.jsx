@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import BookingService from '../../services/booking.service';
 import { toast } from 'react-toastify';
+import PrescriptionDetail from '../prescription/PrescriptionDetail';
 
 function BookingDetailPage() {
   const { id } = useParams();
@@ -33,16 +34,19 @@ function BookingDetailPage() {
     setCancelError(null);
     setCancelSuccess(null);
     try {
-      await BookingService.cancelBooking(id);
-      setBooking({ ...booking, bookingStatus: 'Đã hủy' });
-      toast.success('Đã hủy lịch thành công.');
-    } catch (error) {
-      const msg = error?.response?.data?.message;
+      const res = await BookingService.cancelBooking(id);
+      const msg = res?.message;
       if (msg === 'Bạn chỉ có thể hủy lịch trước giờ hẹn ít nhất 1 tiếng.') {
         toast.error(msg);
       } else {
-        setCancelError(msg || 'Không thể hủy lịch khám. Vui lòng thử lại.');
+        toast.success('Đã hủy lịch thành công.');
+        setBooking({ ...booking, bookingStatus: 'Đã hủy' });
       }
+    } catch (error) {
+      setCancelError(
+        error?.response?.data?.message ||
+          'Không thể hủy lịch khám. Vui lòng thử lại.'
+      );
     } finally {
       setCancelLoading(false);
     }
@@ -58,7 +62,7 @@ function BookingDetailPage() {
       <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
         <button
           className="mb-6 text-blue-600 hover:underline flex items-center"
-          onClick={() => navigate('/my-bookings')}
+          onClick={() => navigate(-1)}
         >
           <svg
             className="w-5 h-5 mr-2"
@@ -103,7 +107,8 @@ function BookingDetailPage() {
             </span>
           </div>
           {/* Cancel button logic */}
-          {booking.bookingStatus === 'Chờ xác nhận' && (
+          {(booking.bookingStatus === 'Chờ xác nhận' ||
+            booking.bookingStatus === 'Đã xác nhận') && (
             <div className="mt-6 flex flex-col gap-2">
               <button
                 className="w-full py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold shadow-lg hover:from-blue-600 hover:to-blue-800 transition text-lg disabled:opacity-60 disabled:cursor-not-allowed"
@@ -125,6 +130,13 @@ function BookingDetailPage() {
             </div>
           )}
         </div>
+        {/* Show prescription detail if exists */}
+        {booking.prescription && (
+          <PrescriptionDetail
+            prescription={booking.prescription}
+            isSent={true}
+          />
+        )}
       </div>
     </div>
   );

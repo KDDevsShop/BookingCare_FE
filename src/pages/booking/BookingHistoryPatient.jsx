@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import BookingService from '../../services/booking.service';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 
 const statusColors = {
   'Chờ xác nhận': 'bg-blue-100 text-blue-700',
@@ -11,8 +11,9 @@ const statusColors = {
   'Đã hoàn thành': 'bg-gray-100 text-gray-700',
 };
 
-function PatientBookingsPage() {
+function BookingHistoryPatient() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,18 +26,7 @@ function PatientBookingsPage() {
     async function fetchBookings() {
       setLoading(true);
       try {
-        const account = JSON.parse(localStorage.getItem('account'));
-        if (!account || account.role !== 'patient') {
-          setError(
-            'Bạn cần đăng nhập tài khoản bệnh nhân để xem lịch sử đặt lịch.'
-          );
-          setBookings([]);
-          return;
-        }
-        const res = await BookingService.getAllBookingsByPatientId(
-          account.patient.id
-        );
-        console.log(res);
+        const res = await BookingService.getAllBookingsByPatientId(id);
         setBookings(res || []);
       } catch {
         setError('Không thể tải danh sách đặt lịch.');
@@ -45,31 +35,30 @@ function PatientBookingsPage() {
       }
     }
     fetchBookings();
-  }, []);
+  }, [id]);
 
   const filteredBookings = statusFilter
     ? bookings.filter((b) => b.bookingStatus === statusFilter)
     : bookings;
 
-  const handleCancelBooking = async (id) => {
+  const handleCancelBooking = async (bookingId) => {
     setCancelLoading(true);
     setCancelError(null);
     setCancelSuccess(null);
     try {
-      const res = await BookingService.cancelBooking(id);
-      console.log(res);
-
+      const res = await BookingService.cancelBooking(bookingId);
       const msg = res?.message;
       if (msg === 'Bạn chỉ có thể hủy lịch trước giờ hẹn ít nhất 1 tiếng.') {
         toast.error(msg);
       } else {
         toast.success('Đã hủy lịch thành công.');
         setBookings((prev) =>
-          prev.map((b) => (b.id === id ? { ...b, bookingStatus: 'Đã hủy' } : b))
+          prev.map((b) =>
+            b.id === bookingId ? { ...b, bookingStatus: 'Đã hủy' } : b
+          )
         );
       }
     } catch (error) {
-      console.log(error);
       setCancelError('Không thể hủy lịch khám. Vui lòng thử lại.');
     } finally {
       setCancelLoading(false);
@@ -111,7 +100,6 @@ function PatientBookingsPage() {
         </span>
       ),
     },
-
     {
       field: 'actions',
       headerName: 'Chức năng',
@@ -120,12 +108,11 @@ function PatientBookingsPage() {
         <div className="flex gap-2 p-3">
           <button
             className="px-3 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-sm font-semibold"
-            onClick={() => navigate(`/booking/${params.row.id}`)}
+            onClick={() => navigate(`/doctor/booking-history/${params.row.id}`)}
           >
             Xem
           </button>
-          {(params.row.bookingStatus === 'Chờ xác nhận' ||
-            params.row.bookingStatus === 'Đã xác nhận') && (
+          {params.row.bookingStatus === 'Chờ xác nhận' && (
             <button
               className="px-3 py-1 bg-gradient-to-r from-blue-400 to-blue-700 text-white rounded-lg shadow hover:from-blue-500 hover:to-blue-800 transition text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
               onClick={() => handleCancelBooking(params.row.id)}
@@ -145,7 +132,7 @@ function PatientBookingsPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-10">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
         <h2 className="text-2xl font-bold text-blue-800 mb-6">
-          Lịch sử đặt khám của bạn
+          Lịch sử đặt khám của bệnh nhân
         </h2>
         <div className="mb-4 flex flex-col md:flex-row md:items-center gap-4">
           <label className="font-medium text-blue-700">
@@ -204,4 +191,4 @@ function PatientBookingsPage() {
   );
 }
 
-export default PatientBookingsPage;
+export default BookingHistoryPatient;

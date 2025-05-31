@@ -10,6 +10,7 @@ import CustomerLayout from './layouts/CustomerLayout';
 import EditPatientProfile from './pages/patient/EditPatientProfile';
 import ForgotPassword from './pages/authentication/ForgotPassword';
 import AdminLayout from './layouts/AdminLayout';
+import DoctorLayout from './layouts/DoctorLayout';
 import DoctorListAdmin from './pages/admin/DoctorListAdmin';
 import SpecialtyList from './pages/admin/SpecialtyList';
 import DoctorProfile from './pages/doctor/DoctorProfile';
@@ -24,6 +25,10 @@ import SpecialtyListPatient from './pages/specialty/SpecialtyListPatient';
 import SpecialtyDetail from './pages/specialty/SpecialtyDetail';
 import FAQListAdmin from './pages/admin/FAQListAdmin';
 import FAQListPatient from './pages/patient/FAQListPatient';
+import DoctorBookingsPage from './pages/booking/DoctorBookingsPage';
+import BookingDetailDoctor from './pages/booking/BookingDetailDoctor';
+import BookingHistoryPatient from './pages/booking/BookingHistoryPatient';
+import BookingConfirmPage from './pages/booking/BookingConfirmPage';
 
 function App() {
   return (
@@ -170,6 +175,47 @@ function App() {
           element={
             <CustomerLayout>
               <FAQListPatient />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path="/doctor/bookings"
+          element={
+            <DoctorLayout>
+              <DoctorBookingsPage />
+            </DoctorLayout>
+          }
+        />
+        <Route
+          path="/doctor/booking/:id"
+          element={
+            <DoctorLayout>
+              <BookingDetailDoctor />
+            </DoctorLayout>
+          }
+        />
+        <Route
+          path="/patients/:id/bookings"
+          element={
+            <DoctorLayout>
+              <BookingHistoryPatient />
+            </DoctorLayout>
+          }
+        />
+
+        <Route
+          path="/doctor/booking-history/:id"
+          element={
+            <DoctorLayout>
+              <BookingDetailPage />
+            </DoctorLayout>
+          }
+        />
+        <Route
+          path="/booking/confirm"
+          element={
+            <CustomerLayout>
+              <BookingConfirmPage />
             </CustomerLayout>
           }
         />

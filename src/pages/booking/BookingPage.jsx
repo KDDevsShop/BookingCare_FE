@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import BookingService from "../../services/booking.service";
-import { toast } from "react-toastify";
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import BookingService from '../../services/booking.service';
+import { toast } from 'react-toastify';
 
 function BookingPage() {
   const location = useLocation();
@@ -9,10 +9,10 @@ function BookingPage() {
   const { doctor, schedule } = location.state || {};
 
   const [form, setForm] = useState({
-    bookingReason: "",
-    patientName: "",
-    patientPhone: "",
-    patientEmail: "",
+    bookingReason: '',
+    patientName: '',
+    patientPhone: '',
+    patientEmail: '',
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -21,13 +21,13 @@ function BookingPage() {
 
   React.useEffect(() => {
     // Prefill form with account info if available
-    const account = JSON.parse(localStorage.getItem("account"));
-    if (account && account.role === "patient" && account.patient) {
+    const account = JSON.parse(localStorage.getItem('account'));
+    if (account && account.role === 'patient' && account.patient) {
       setForm((prev) => ({
         ...prev,
-        patientName: account.patient.patientName || "",
-        patientPhone: account.patient.patientPhone || "",
-        patientEmail: account.patient.patientEmail || "",
+        patientName: account.patient.patientName || '',
+        patientPhone: account.patient.patientPhone || '',
+        patientEmail: account.patient.patientEmail || '',
       }));
     }
   }, []);
@@ -43,9 +43,9 @@ function BookingPage() {
     setSuccess(null);
     try {
       // Get patientId from localStorage (assume patient is logged in)
-      const account = JSON.parse(localStorage.getItem("account"));
-      if (!account || account.role !== "patient") {
-        setError("Bạn cần đăng nhập tài khoản bệnh nhân để đặt lịch.");
+      const account = JSON.parse(localStorage.getItem('account'));
+      if (!account || account.role !== 'patient') {
+        setError('Bạn cần đăng nhập tài khoản bệnh nhân để đặt lịch.');
         setSubmitting(false);
         return;
       }
@@ -62,14 +62,15 @@ function BookingPage() {
       const res = await BookingService.createBooking(bookingData);
       const bookingId = res?.booking?.id;
       console.log(res);
-      toast.success("Đặt lịch thành công!");
+
       if (bookingId) {
+        toast.success('Đặt lịch thành công!');
         navigate(`/booking/${bookingId}`);
+      } else {
+        toast.error(res?.message || 'Đặt lịch thất bại. Vui lòng thử lại.');
       }
     } catch (err) {
-      setError(
-        err?.response?.data?.message || "Đặt lịch thất bại. Vui lòng thử lại."
-      );
+      toast.error('Đặt lịch thất bại. Vui lòng thử lại.');
     } finally {
       setSubmitting(false);
     }
@@ -123,15 +124,15 @@ function BookingPage() {
             Bác sĩ: <span className="text-blue-900">{doctor.doctorName}</span>
           </div>
           <div className="text-gray-700 mb-1">
-            Chuyên khoa: {doctor.specialty?.specialtyName || "-"}
+            Chuyên khoa: {doctor.specialty?.specialtyName || '-'}
           </div>
           <div className="text-gray-700 mb-1">Ngày: {schedule.workDate}</div>
           <div className="text-gray-700 mb-1">
-            Thời gian: {schedule.schedule?.startTime} -{" "}
+            Thời gian: {schedule.schedule?.startTime} -{' '}
             {schedule.schedule?.endTime}
           </div>
           <div className="text-gray-700">
-            Giá khám:{" "}
+            Giá khám:{' '}
             <span className="text-blue-700 font-semibold">
               {Number(doctor.examinationPrice).toLocaleString()} VNĐ
             </span>
@@ -201,7 +202,7 @@ function BookingPage() {
             className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700 transition disabled:opacity-60"
             disabled={submitting}
           >
-            {submitting ? "Đang đặt lịch..." : "Đặt lịch ngay"}
+            {submitting ? 'Đang đặt lịch...' : 'Đặt lịch ngay'}
           </button>
         </form>
       </div>

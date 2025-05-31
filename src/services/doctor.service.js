@@ -1,17 +1,18 @@
-import ApiService from "./api.service";
+import ApiService from './api.service';
 
 class DoctorService {
   constructor() {
-    this.api = new ApiService("http://localhost:5000/api/doctors");
+    this.api = new ApiService('http://localhost:5000/api/doctors');
   }
 
   async getAllDoctors() {
-    return this.api.request("/", "GET");
+    return this.api.request('/', 'GET');
   }
 
   async getDoctorById(id) {
-    return this.api.request(`/${id}`, "GET");
+    return this.api.request(`/${id}`, 'GET');
   }
+
 
   async createDoctor(data, userAvatarFile) {
     if (userAvatarFile) {
@@ -19,16 +20,16 @@ class DoctorService {
       for (const key in data) {
         formData.append(key, data[key]);
       }
-      formData.append("userAvatar", userAvatarFile);
-      return this.api.request(`/`, "POST", formData, {
+      formData.append('userAvatar', userAvatarFile);
+      return this.api.request(`/`, 'POST', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
     } else {
-      return this.api.request(`/`, "POST", data, {
+      return this.api.request(`/`, 'POST', data, {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
     }
@@ -40,23 +41,23 @@ class DoctorService {
       for (const key in data) {
         formData.append(key, data[key]);
       }
-      formData.append("userAvatar", userAvatarFile);
-      return this.api.request(`/${id}`, "PUT", formData, {
+      formData.append('userAvatar', userAvatarFile);
+      return this.api.request(`/${id}`, 'PUT', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
     } else {
-      return this.api.request(`/${id}`, "PUT", data, {
+      return this.api.request(`/${id}`, 'PUT', data, {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
     }
   }
 
   async deleteDoctor(id) {
-    return this.api.request(`/${id}`, "DELETE");
+    return this.api.request(`/${id}`, 'DELETE');
   }
 }
 
