@@ -31,6 +31,8 @@ import BookingHistoryPatient from './pages/booking/BookingHistoryPatient';
 import BookingConfirmPage from './pages/booking/BookingConfirmPage';
 import PatientListAdmin from './pages/admin/PatientListAdmin';
 import AdminBookingsPage from './pages/booking/AdminBookingsPage';
+import WorkSchedule from './pages/doctor/WorkSchedule';
+import AdminWorkSchedule from './pages/admin/AdminWorkSchedule';
 
 function App() {
   return (
@@ -260,6 +262,22 @@ function App() {
             <CustomerLayout>
               <BookingConfirmPage />
             </CustomerLayout>
+          }
+        />
+        <Route
+          path="/doctor/work-schedule/:id"
+          element={
+            <DoctorLayout>
+              <WorkSchedule />
+            </DoctorLayout>
+          }
+        />
+        <Route
+          path="/admin/work-schedule"
+          element={
+            <AdminLayout>
+              <AdminWorkSchedule />
+            </AdminLayout>
           }
         />
       </Routes>

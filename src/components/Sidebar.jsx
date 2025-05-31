@@ -1,13 +1,12 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
   Package,
   LogOut,
-  GiftIcon,
   ListOrderedIcon,
+  CalendarRange,
 } from 'lucide-react';
-import authService from '../services/auth.service';
 
 const navItems = [
   {
@@ -40,18 +39,21 @@ const navItems = [
     icon: <ListOrderedIcon size={18} />,
     path: '/admin/bookings',
   },
+  {
+    label: 'Quản lý lịch làm',
+    icon: <CalendarRange size={18} />,
+    path: `/admin/work-schedule`,
+  },
 ];
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigrate = useNavigate();
 
   const handleLogout = () => {
-    authService.logout().then(() => {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-      window.location.href = '/';
-    });
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('account');
+    navigrate('/');
   };
 
   return (
@@ -78,7 +80,7 @@ const Sidebar = () => {
       <div className="mt-auto p-4 border-t border-gray-100">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-500"
+          className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer hover:text-red-500"
         >
           <LogOut size={18} />
           Logout

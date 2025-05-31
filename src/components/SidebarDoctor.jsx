@@ -1,35 +1,39 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   LogOut,
   BriefcaseMedical,
+  CalendarRange,
 } from 'lucide-react';
-import authService from '../services/auth.service';
 import DoctorBookingsPage from '../pages/booking/DoctorBookingsPage';
-
-const navItems = [
-  {
-    label: 'Hồ sơ cá nhân',
-    icon: <LayoutDashboard size={18} />,
-    path: '/doctor/profile',
-  },
-  {
-    label: 'Quản lý lịch khám',
-    icon: <BriefcaseMedical size={18} />,
-    path: '/doctor/bookings',
-  },
-];
 
 const SidebarDoctor = () => {
   const location = useLocation();
+  const navigrate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('account')) || {};
+
+  const navItems = [
+    {
+      label: 'Hồ sơ cá nhân',
+      icon: <LayoutDashboard size={18} />,
+      path: '/doctor/profile',
+    },
+    {
+      label: 'Quản lý lịch khám',
+      icon: <BriefcaseMedical size={18} />,
+      path: '/doctor/bookings',
+    },
+    {
+      label: 'Quản lý lịch làm',
+      icon: <CalendarRange size={18} />,
+      path: `/doctor/work-schedule/${user?.id || '0'}`,
+    },
+  ];
 
   const handleLogout = () => {
-    authService.logout().then(() => {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-      window.location.href = '/';
-    });
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('account');
+    navigrate('/');
   };
 
   return (
@@ -56,7 +60,7 @@ const SidebarDoctor = () => {
       <div className="mt-auto p-4 border-t border-gray-100">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-500"
+          className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer hover:text-red-500"
         >
           <LogOut size={18} />
           Logout
