@@ -169,13 +169,18 @@ const DoctorForm = ({
               fullWidth
             />
             <TextField
+              select
               label="Chức danh"
               name="doctorTitle"
               value={form.doctorTitle}
               onChange={handleChange}
               required
               fullWidth
-            />
+            >
+              <MenuItem value="Bác sĩ">Bác sĩ</MenuItem>
+              <MenuItem value="Thạc sĩ">Thạc sĩ</MenuItem>
+              <MenuItem value="Tiến sĩ">Tiến sĩ</MenuItem>
+            </TextField>
             <TextField
               label="Mô tả ngắn"
               name="doctorSortDesc"

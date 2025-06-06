@@ -27,9 +27,10 @@ const RevenueChart = ({ data, timeFilter }) => {
     });
   } else {
     // Data by day
-    const maxDay = Math.max(...data.map((d) => d.day), 31);
-    labels = Array.from({ length: maxDay }, (_, i) => `Ngày ${i + 1}`);
-    values = Array(maxDay).fill(0);
+    const maxDay =
+      Array.isArray(data) && Math.max(...data.map((d) => d.day), 31);
+    labels = Array?.from({ length: maxDay }, (_, i) => `Ngày ${i + 1}`);
+    values = Array(maxDay)?.fill(0);
     data.forEach((item) => {
       if (item.day >= 1 && item.day <= maxDay) {
         values[item.day - 1] = item.revenue;
@@ -76,14 +77,14 @@ const RevenueChart = ({ data, timeFilter }) => {
   }, [data]);
 
   return (
-    <div className='bg-white p-6 rounded-lg shadow-lg'>
-      <h3 className='text-lg font-semibold mb-4 text-blue-700'>
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h3 className="text-lg font-semibold mb-4 text-blue-700">
         Biểu đồ doanh thu
       </h3>
       {hasData > 0 ? (
         <Bar data={chartData} options={options} />
       ) : (
-        <div className='text-center text-gray-500 my-24'>Không có dữ liệu</div>
+        <div className="text-center text-gray-500 my-24">Không có dữ liệu</div>
       )}
     </div>
   );

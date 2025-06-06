@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DoctorService from '../../services/doctor.service';
 import DoctorScheduleService from '../../services/doctorSchedule.service';
-import dayjs from 'dayjs';
 
 const baseUrl = 'http://localhost:5000';
 
@@ -47,8 +46,10 @@ function DoctorDetail() {
   }, [id]);
 
   const filteredSchedules = filterDate
-    ? schedules.filter((s) => s.workDate === filterDate)
-    : schedules;
+    ? schedules
+        .filter((item) => item.isConfirmed)
+        .filter((s) => s.workDate === filterDate)
+    : schedules.filter((item) => item.isConfirmed);
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
   if (error)

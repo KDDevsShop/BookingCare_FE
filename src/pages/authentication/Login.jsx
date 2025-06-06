@@ -3,45 +3,46 @@ import { Link, useNavigate } from 'react-router-dom';
 import authService from '../../services/auth.service';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Login = () => {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+
     try {
       const response = await authService.login(credentials);
+
       if (response && response.token) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('account', JSON.stringify(response.account));
         toast.success('Đăng nhập thành công!');
+
         if (response.account?.role === 'admin') {
           navigate('/dashboard');
         } else if (response.account?.role === 'doctor') {
           navigate('/doctor/bookings');
         } else if (response.account?.role === 'patient') {
-          navigate('/homepage');
+          navigate('/');
         }
       } else {
-        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
         toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
       }
     } catch (err) {
       console.log(err);
-      setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
       toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
     } finally {
       setLoading(false);
@@ -91,22 +92,22 @@ const Login = () => {
             Đăng nhập vào Phòng Khám Thu Cúc
           </h2>
           <p className="text-gray-500 mb-8">
-            Nhập username và mật khẩu để tiếp tục
+            Nhập email và mật khẩu để tiếp tục
           </p>
 
           {/* Form đăng nhập */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-blue-700 mb-1">
-                Username
+                Email
               </label>
               <input
                 onChange={handleChange}
-                value={credentials.username}
-                type="text"
-                name="username"
+                value={credentials.email}
+                type="email"
+                name="email"
                 className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition"
-                placeholder="Nhập username"
+                placeholder="Nhập email"
                 required
               />
             </div>
@@ -115,16 +116,27 @@ const Login = () => {
               <label className="block text-sm font-medium text-blue-700 mb-1">
                 Mật khẩu
               </label>
-              <input
-                name="password"
-                onChange={handleChange}
-                value={credentials.password}
-                type="password"
-                className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition"
-                placeholder="Nhập mật khẩu"
-                required
-                autoComplete="current-password"
-              />
+              <div className="relative">
+                <input
+                  name="password"
+                  onChange={handleChange}
+                  value={credentials.password}
+                  type={showPassword ? 'text' : 'password'}
+                  className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition pr-12"
+                  placeholder="Nhập mật khẩu"
+                  required
+                  autoComplete="current-password"
+                />
+                <span
+                  className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-blue-500"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center justify-between">

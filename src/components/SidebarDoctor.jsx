@@ -33,7 +33,7 @@ const SidebarDoctor = () => {
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('account');
-    navigrate('/');
+    navigrate('/login');
   };
 
   return (

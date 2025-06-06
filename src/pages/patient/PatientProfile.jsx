@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import patientService from "../../services/patient.service";
-import { CircularProgress } from "@mui/material";
+import React, { useEffect, useState } from 'react';
+import patientService from '../../services/patient.service';
+import { CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const PatientProfile = () => {
-  // Parse account from localStorage
+  const navigate = useNavigate();
   let currentAccount = null;
   try {
-    currentAccount = JSON.parse(localStorage.getItem("account"));
+    currentAccount = JSON.parse(localStorage.getItem('account'));
   } catch {
     currentAccount = null;
   }
@@ -14,19 +15,19 @@ const PatientProfile = () => {
 
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const baseUrl = "http://localhost:5000";
+  const [error, setError] = useState('');
+  const baseUrl = 'http://localhost:5000';
 
   useEffect(() => {
     const fetchPatient = async () => {
       setLoading(true);
-      setError("");
+      setError('');
       try {
         const response = await patientService.getPatientById(patientId);
-        console.log(patientId);
         setPatient(response.data || response); // handle both .data and direct
       } catch (err) {
-        setError("Không thể tải thông tin bệnh nhân.");
+        console.log(err);
+        setError('Không thể tải thông tin bệnh nhân.');
       } finally {
         setLoading(false);
       }
@@ -53,7 +54,11 @@ const PatientProfile = () => {
   if (!patient) {
     return null;
   }
-  console.log(patient);
+
+  const handleLogout = () => {
+    localStorage.removeItem('account');
+    navigate('/login');
+  };
 
   const { patientName, patientPhone, patientEmail, account } = patient;
 
@@ -67,7 +72,7 @@ const PatientProfile = () => {
           src={
             account?.userAvatar
               ? `${baseUrl}${account?.userAvatar}`
-              : "/public/DoctorLogin.png"
+              : '/public/DoctorLogin.png'
           }
           alt="Avatar"
           className="w-28 h-28 rounded-full object-cover border-4 border-blue-200 shadow"
@@ -84,36 +89,42 @@ const PatientProfile = () => {
         </div>
         <div>
           <span className="font-semibold text-blue-700">Email: </span>
-          <span>{patientEmail}</span>
+          <span>{account?.email || '-'}</span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Giới tính: </span>
           <span>
             {account?.userGender === true
-              ? "Nam"
+              ? 'Nam'
               : account?.userGender === false
-              ? "Nữ"
-              : "Khác"}
+              ? 'Nữ'
+              : 'Khác'}
           </span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Ngày sinh: </span>
           <span>
             {account?.userDoB
-              ? new Date(account.userDoB).toLocaleDateString("vi-VN")
-              : "-"}
+              ? new Date(account.userDoB).toLocaleDateString('vi-VN')
+              : '-'}
           </span>
         </div>
         <div>
           <span className="font-semibold text-blue-700">Địa chỉ: </span>
-          <span>{account?.userAddress || "-"}</span>
+          <span>{account?.userAddress || '-'}</span>
         </div>
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-between items-center mt-6">
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-            onClick={() => (window.location.href = "/me/edit")}
+            onClick={() => (window.location.href = '/me/edit')}
           >
             Chỉnh sửa
+          </button>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 py-2 px-8 rounded text-white hover:bg-red-600 transition"
+          >
+            Đăng xuất
           </button>
         </div>
       </div>

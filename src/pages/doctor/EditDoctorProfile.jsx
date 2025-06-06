@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import doctorService from '../../services/doctor.service';
+import AuthService from '../../services/auth.service';
 import {
   CircularProgress,
   Button,
@@ -13,6 +14,14 @@ import {
   Paper,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
+import { toast } from 'react-toastify';
 
 const EditDoctorProfile = () => {
   let currentAccount = null;
@@ -30,6 +39,20 @@ const EditDoctorProfile = () => {
     currentAccount?.userAvatar || '/public/DoctorLogin.png'
   );
   const [avatarFile, setAvatarFile] = useState(null);
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [showPassword, setShowPassword] = useState({
+    old: false,
+    new: false,
+    confirm: false,
+  });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
   const avatarFileRef = useRef();
   const navigate = useNavigate();
   const baseUrl = 'http://localhost:5000';
@@ -67,7 +90,7 @@ const EditDoctorProfile = () => {
   }, [doctorId]);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
       [name]: value,
@@ -107,6 +130,69 @@ const EditDoctorProfile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleShowPassword = (field) => {
+    setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const handleOpenPasswordModal = () => {
+    setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+    setPasswordError('');
+    setPasswordSuccess('');
+    setOpenPasswordModal(true);
+  };
+
+  const handleClosePasswordModal = () => {
+    setOpenPasswordModal(false);
+  };
+
+  const handleSubmitPassword = async (e) => {
+    e.preventDefault();
+    if (
+      !passwordForm.oldPassword ||
+      !passwordForm.newPassword ||
+      !passwordForm.confirmPassword
+    ) {
+      setPasswordError('Vui lòng nhập đầy đủ thông tin.');
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError('Mật khẩu mới và xác nhận không khớp.');
+      return;
+    }
+    setPasswordLoading(true);
+    try {
+      const response = await AuthService.changePassword(
+        currentAccount.id,
+        passwordForm.oldPassword,
+        passwordForm.newPassword
+      );
+
+      if (response.status !== 200) {
+        throw new Error(
+          response?.message ||
+            response ||
+            'Đổi mật khẩu thất bại. Vui lòng kiểm tra lại.'
+        );
+      }
+
+      toast.success('Đổi mật khẩu thành công!');
+      setTimeout(() => {
+        setOpenPasswordModal(false);
+        navigate('/login');
+      }, 1200);
+    } catch (err) {
+      console.log(err);
+      toast.error('Đổi mật khẩu thất bại. Vui lòng kiểm tra lại.');
+      setPasswordError('Đổi mật khẩu thất bại. Vui lòng kiểm tra lại.');
+    }
+    setPasswordLoading(false);
   };
 
   if (loading) {
@@ -259,7 +345,7 @@ const EditDoctorProfile = () => {
             fullWidth
             margin="normal"
           />
-          <Box className="flex justify-between mt-8">
+          <Box className="flex justify-between mt-8 gap-4">
             <Button
               variant="contained"
               color="primary"
@@ -279,6 +365,15 @@ const EditDoctorProfile = () => {
             >
               Hủy
             </Button>
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={handleOpenPasswordModal}
+              size="large"
+              sx={{ minWidth: 160 }}
+            >
+              Đổi mật khẩu
+            </Button>
           </Box>
           {success && (
             <Typography color="success.main" align="center" sx={{ mt: 2 }}>
@@ -287,6 +382,106 @@ const EditDoctorProfile = () => {
           )}
         </form>
       </Paper>
+      {/* Password Change Modal */}
+      <Dialog
+        open={openPasswordModal}
+        onClose={handleClosePasswordModal}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Đổi mật khẩu</DialogTitle>
+        <form onSubmit={handleSubmitPassword}>
+          <DialogContent dividers>
+            <TextField
+              label="Mật khẩu cũ"
+              name="oldPassword"
+              type={showPassword.old ? 'text' : 'password'}
+              value={passwordForm.oldPassword}
+              onChange={handlePasswordChange}
+              fullWidth
+              margin="normal"
+              required
+              InputProps={{
+                endAdornment: (
+                  <IconButton
+                    onClick={() => handleShowPassword('old')}
+                    edge="end"
+                  >
+                    {showPassword.old ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                ),
+              }}
+            />
+            <TextField
+              label="Mật khẩu mới"
+              name="newPassword"
+              type={showPassword.new ? 'text' : 'password'}
+              value={passwordForm.newPassword}
+              onChange={handlePasswordChange}
+              fullWidth
+              margin="normal"
+              required
+              InputProps={{
+                endAdornment: (
+                  <IconButton
+                    onClick={() => handleShowPassword('new')}
+                    edge="end"
+                  >
+                    {showPassword.new ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                ),
+              }}
+            />
+            <TextField
+              label="Xác nhận mật khẩu mới"
+              name="confirmPassword"
+              type={showPassword.confirm ? 'text' : 'password'}
+              value={passwordForm.confirmPassword}
+              onChange={handlePasswordChange}
+              fullWidth
+              margin="normal"
+              required
+              InputProps={{
+                endAdornment: (
+                  <IconButton
+                    onClick={() => handleShowPassword('confirm')}
+                    edge="end"
+                  >
+                    {showPassword.confirm ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                ),
+              }}
+            />
+            {passwordError && (
+              <Typography color="error" align="center" sx={{ mt: 1 }}>
+                {passwordError}
+              </Typography>
+            )}
+            {passwordSuccess && (
+              <Typography color="success.main" align="center" sx={{ mt: 1 }}>
+                {passwordSuccess}
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleClosePasswordModal}
+              color="secondary"
+              disabled={passwordLoading}
+            >
+              Hủy
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={passwordLoading}
+            >
+              {passwordLoading ? <CircularProgress size={20} /> : 'Xác nhận'}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
     </Box>
   );
 };

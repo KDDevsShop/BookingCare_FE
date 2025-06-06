@@ -1,30 +1,42 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import DoctorService from '../services/doctor.service';
 import SpecialtyService from '../services/specialty.service';
+import statisticService from '../services/statistic.service';
+import doctorService from '../services/doctor.service';
 
 function HomePage() {
   const [searchType, setSearchType] = useState('doctor');
   const [searchValue, setSearchValue] = useState('');
   const [topDoctors, setTopDoctors] = useState([]);
-  const [topSpecialties, setTopSpecialties] = useState([]);
   const navigate = useNavigate();
 
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
+
   React.useEffect(() => {
-    async function fetchData() {
+    (async () => {
       try {
-        const doctors = await DoctorService.getAllDoctors();
-        setTopDoctors(doctors ? doctors.slice(0, 3) : []);
-      } catch {}
-      try {
-        const specialties = await SpecialtyService.getAllSpecialties();
-        setTopSpecialties(specialties ? specialties.slice(0, 3) : []);
-      } catch {}
-    }
-    fetchData();
-  }, []);
+        const doctors = await statisticService.getDoctorRevenueStatistics({
+          year: currentYear,
+          month: null,
+          top3: 'true',
+        });
+        const callApis = doctors.map((doctor) => {
+          return (async () => {
+            const response = await doctorService.getDoctorById(doctor.doctorId);
+            setTopDoctors((prev) => [...prev, response]);
+          })();
+        });
+
+        Promise.all(callApis);
+        // setTopDoctors(doctors ? doctors.slice(0, 3) : []);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [currentYear]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -100,7 +112,7 @@ function HomePage() {
         {/* Banner Section */}
         <section className="w-full bg-blue-700 py-10 flex flex-col items-center justify-center text-white mb-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-2">
-            Chào mừng đến với BookingCare!
+            Chào mừng đến với phòng khám Thu Cúc!
           </h2>
           <p className="text-lg md:text-xl mb-4">
             Đặt lịch khám bệnh, tìm bác sĩ và chuyên khoa hàng đầu Việt Nam
@@ -179,66 +191,7 @@ function HomePage() {
             )}
           </div>
         </section>
-        {/* List of Some Specialties Section */}
-        <section className="w-full max-w-5xl mb-12">
-          <h3 className="text-2xl font-bold text-blue-700 mb-6 text-center flex items-center justify-center gap-2">
-            <svg
-              className="w-7 h-7 text-blue-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 17v-2a4 4 0 018 0v2m-4-6a4 4 0 100-8 4 4 0 000 8zm0 0v2m0 4v2m-4-6a4 4 0 018 0v2"
-              />
-            </svg>
-            Một số chuyên khoa nổi bật
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {topSpecialties.length === 0 ? (
-              <div className="col-span-full text-center text-gray-500">
-                Không có dữ liệu chuyên khoa.
-              </div>
-            ) : (
-              topSpecialties.map((spec) => (
-                <div
-                  key={spec.id}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow p-6 flex flex-col items-center border border-blue-100 cursor-pointer"
-                  onClick={() => navigate(`/specialties/${spec.id}`)}
-                >
-                  <img
-                    src={
-                      spec.specialtyImage
-                        ? `http://localhost:5000${spec.specialtyImage}`
-                        : '/public/DoctorLogin.png'
-                    }
-                    alt={spec.specialtyName}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-blue-200 mb-3 shadow"
-                  />
-                  <h4 className="text-lg font-semibold text-blue-800 mb-1">
-                    {spec.specialtyName}
-                  </h4>
-                  <div className="text-gray-600 text-center text-sm mb-1 line-clamp-2">
-                    {spec.specialtyDesc}
-                  </div>
-                  <button
-                    className="mt-2 px-3 py-1 bg-blue-600 text-white rounded shadow hover:bg-blue-700 text-xs font-semibold"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/specialties/${spec.id}`);
-                    }}
-                  >
-                    Xem chi tiết
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-        {/* Helpful Information Section */}
+
         <section className="w-full max-w-5xl mb-16">
           <h3 className="text-2xl font-bold text-blue-700 mb-6 text-center flex items-center justify-center gap-2">
             <svg

@@ -1,41 +1,51 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
-import authService from "../../services/auth.service";
-import { toast } from "react-toastify";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
+import authService from '../../services/auth.service';
+import { toast } from 'react-toastify';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    patientName: "",
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-    patientPhone: "",
-    userGender: "",
-    userDoB: "",
-    userAddress: "",
+    patientName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    patientPhone: '',
+    userGender: '',
+    userDoB: '',
+    userAddress: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    if (formData.password !== formData.confirmPassword) {
-      setError("Mật khẩu không khớp.");
-      setLoading(false);
-      return;
-    }
+
     try {
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Mật khẩu không khớp.');
+      }
+
+      const dob = new Date(formData.userDoB);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      if (isNaN(dob.getTime()) || age < 16) {
+        throw new Error('Bạn phải đủ 16 tuổi trở lên để đăng ký tài khoản.');
+      }
+
       const data = {
         username: formData.username,
         password: formData.password,
@@ -43,33 +53,25 @@ const Register = () => {
         userDoB: formData.userDoB,
         userAddress: formData.userAddress,
         userGender:
-          formData.userGender === "male"
+          formData.userGender === 'male'
             ? true
-            : formData.userGender === "female"
+            : formData.userGender === 'female'
             ? false
             : null,
         patientName: formData.patientName,
         patientPhone: formData.patientPhone,
       };
       await authService.signup(data);
-      toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
-      navigate("/");
+      toast.success('Đăng ký thành công!');
+      navigate('/login');
     } catch (err) {
-      setError(
-        err?.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại."
-      );
-      toast.error(error);
+      console.log(err);
+      setLoading(false);
+      toast.error(err?.message || err || 'Đăng ký tài khoản thất bại.');
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (error) {
-      // Optionally, you can auto-clear error after a few seconds
-      // setTimeout(() => setError(""), 4000);
-    }
-  }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-blue-200 to-blue-400 px-4">
@@ -144,35 +146,19 @@ const Register = () => {
                 placeholder="you@example.com"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-blue-700 mb-1">
-                  Tên đăng nhập
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition shadow-sm"
-                  placeholder="Nhập tên đăng nhập"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-blue-700 mb-1">
-                  Số điện thoại
-                </label>
-                <input
-                  type="tel"
-                  name="patientPhone"
-                  value={formData.patientPhone}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition shadow-sm"
-                  placeholder="Nhập số điện thoại"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-blue-700 mb-1">
+                Số điện thoại
+              </label>
+              <input
+                type="tel"
+                name="patientPhone"
+                value={formData.patientPhone}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition shadow-sm"
+                placeholder="Nhập số điện thoại"
+              />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -223,31 +209,53 @@ const Register = () => {
                 <label className="block text-sm font-medium text-blue-700 mb-1">
                   Mật khẩu
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  minLength={8}
-                  className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition shadow-sm"
-                  placeholder="Nhập mật khẩu"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    minLength={8}
+                    className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition shadow-sm pr-12"
+                    placeholder="Nhập mật khẩu"
+                  />
+                  <span
+                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-blue-500"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </span>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-blue-700 mb-1">
                   Nhập lại mật khẩu
                 </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  minLength={8}
-                  className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition shadow-sm"
-                  placeholder="Nhập lại mật khẩu"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    minLength={8}
+                    className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 text-blue-900 placeholder-blue-300 transition shadow-sm pr-12"
+                    placeholder="Nhập lại mật khẩu"
+                  />
+                  <span
+                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-blue-500"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </span>
+                </div>
               </div>
             </div>
             <button
@@ -256,14 +264,14 @@ const Register = () => {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl font-bold text-lg shadow-lg transition duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               {loading ? (
-                <CircularProgress size={"1.5rem"} color="inherit" />
+                <CircularProgress size={'1.5rem'} color="inherit" />
               ) : (
-                "Tạo tài khoản"
+                'Tạo tài khoản'
               )}
             </button>
           </form>
           <div className="mt-8 text-center text-gray-500">
-            Đã có tài khoản?{" "}
+            Đã có tài khoản?{' '}
             <Link
               to="/"
               className="text-blue-600 font-semibold hover:underline"

@@ -18,7 +18,7 @@ function Header() {
       <div className="container mx-auto flex justify-between items-center px-4">
         <div
           className="flex items-center gap-3 cursor-pointer"
-          onClick={() => navigate('/homepage')}
+          onClick={() => navigate('/')}
         >
           <img
             src="/public/logo.jpg"
@@ -26,7 +26,7 @@ function Header() {
             className="h-12 w-12 object-contain rounded-full shadow-md border-2 border-white bg-white"
           />
           <span className="text-2xl font-extrabold tracking-tight text-white drop-shadow-lg">
-            BookingCare
+            Thu Cúc
           </span>
         </div>
         <nav className="flex items-center gap-8">
@@ -72,16 +72,10 @@ function Header() {
           ) : (
             <>
               <Link
-                to="/"
-                className="text-white hover:underline hover:opacity-80 font-semibold px-3 py-2 rounded-lg transition-all"
-              >
-                Login
-              </Link>
-              <Link
-                to="/register"
+                to="/login"
                 className="bg-white text-blue-700 py-2 px-5 rounded-lg shadow hover:bg-blue-100 font-bold border border-blue-200 transition-all"
               >
-                Register
+                Đăng nhập
               </Link>
             </>
           )}
