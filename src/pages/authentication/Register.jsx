@@ -98,7 +98,7 @@ const Register = () => {
           {/* Tabs */}
           <div className="flex mb-8 border-b border-blue-100">
             <Link
-              to="/"
+              to="/login"
               className="mr-6 pb-2 text-gray-400 hover:text-blue-600 hover:border-b-4 hover:border-blue-600 font-semibold transition-all duration-200"
             >
               Đăng nhập
@@ -273,7 +273,7 @@ const Register = () => {
           <div className="mt-8 text-center text-gray-500">
             Đã có tài khoản?{' '}
             <Link
-              to="/"
+              to="/login"
               className="text-blue-600 font-semibold hover:underline"
             >
               Đăng nhập ngay

@@ -86,18 +86,21 @@ const AdminWorkSchedule = () => {
     const matchesDate = selectedDate
       ? dayjs(item.workDate).format('YYYY-MM-DD') === selectedDate
       : true;
+
     const matchesDoctor =
       searchDoctor.trim() === ''
         ? true
-        : (item.doctorName || '')
+        : (item.doctor.doctorName || '')
             .toLowerCase()
             .includes(searchDoctor.trim().toLowerCase());
+
     const matchesStatus =
       statusFilter === ''
         ? true
         : statusFilter === 'approved'
         ? item.isConfirmed === true
         : item.isConfirmed === false;
+
     return matchesDate && matchesDoctor && matchesStatus;
   });
 
@@ -153,7 +156,6 @@ const AdminWorkSchedule = () => {
       align: 'center',
       flex: 1,
       valueGetter: (params) => {
-        console.log(params);
         return dayjs(params?.value || params).format('DD/MM/YYYY');
       },
     },
@@ -219,7 +221,6 @@ const AdminWorkSchedule = () => {
       flex: 1.2,
       align: 'center',
       renderCell: (params) => {
-        console.log(params);
         return !params?.row?.isConfirmed ? (
           <Stack direction="row" spacing={1} justifyContent="center">
             <Button
@@ -270,14 +271,32 @@ const AdminWorkSchedule = () => {
     setChosenShifts([]);
   };
 
-  const availableShifts = allSchedules.filter(
-    (sch) =>
-      !sch.doctorSchedules?.some(
-        (ds) =>
-          ds.workDate === modalWorkDate &&
-          ds.doctorId === Number(selectedDoctor)
-      ) && !chosenShifts.includes(sch.id)
-  );
+  // Get current date and time in Vietnam timezone (UTC+7)
+  const nowVN = new Date(Date.now() + 7 * 60 * 60 * 1000);
+  const todayVN = nowVN.toISOString().split('T')[0];
+  const currentTimeVN = nowVN.toISOString().split('T')[1].split(':')[0]; // 'HH:MM'
+
+  const availableShifts = allSchedules.filter((sch) => {
+    const isAlreadyRegistered = sch.doctorSchedules?.some(
+      (ds) =>
+        ds.workDate === modalWorkDate && ds.doctorId === Number(selectedDoctor)
+    );
+
+    const isAlreadyChosen = chosenShifts.includes(sch.id);
+
+    let isPast = false;
+
+    if (modalWorkDate === todayVN) {
+      if (sch.startTime && sch.startTime.split(':')[0] < currentTimeVN) {
+        isPast = true;
+      }
+    }
+
+    console.log(isAlreadyRegistered, isAlreadyChosen, isPast);
+
+    return !isAlreadyRegistered && !isAlreadyChosen && !isPast;
+  });
+
   const selectedShifts = allSchedules.filter((sch) =>
     chosenShifts.includes(sch.id)
   );

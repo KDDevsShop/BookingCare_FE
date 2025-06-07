@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import patientService from "../../services/patient.service";
+import React, { useEffect, useState, useRef } from 'react';
+import patientService from '../../services/patient.service';
 import {
   CircularProgress,
   Button,
@@ -11,52 +11,52 @@ import {
   Typography,
   Box,
   Paper,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const EditPatientProfile = () => {
   let currentAccount = null;
   try {
-    currentAccount = JSON.parse(localStorage.getItem("account"));
+    currentAccount = JSON.parse(localStorage.getItem('account'));
   } catch {
     currentAccount = null;
   }
   const patientId = currentAccount?.patient?.id;
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [form, setForm] = useState({});
   const [avatarPreview, setAvatarPreview] = useState(
-    currentAccount?.userAvatar || "/public/DoctorLogin.png"
+    currentAccount?.userAvatar || '/public/DoctorLogin.png'
   );
   const [avatarFile, setAvatarFile] = useState(null);
   const avatarFileRef = useRef();
   const navigate = useNavigate();
-  const baseUrl = "http://localhost:5000";
+  const baseUrl = 'http://localhost:5000';
 
-  console.log(avatarPreview);
   useEffect(() => {
     const fetchPatient = async () => {
       setLoading(true);
-      setError("");
+      setError('');
       try {
         const response = await patientService.getPatientById(patientId);
         const data = response.data || response;
         console.log(data);
         setForm({
-          patientName: data.patientName || "",
-          patientPhone: data.patientPhone || "",
-          patientEmail: data.patientEmail || "",
-          userGender: data.account?.userGender?.toString() || "true",
+          patientName: data.patientName || '',
+          patientPhone: data.patientPhone || '',
+          patientEmail: data.account.email || '',
+          userGender: data.account?.userGender?.toString() || 'true',
           userDoB: data.account?.userDoB
             ? data.account.userDoB.slice(0, 10)
-            : "",
-          userAddress: data.account?.userAddress || "",
-          username: data.account?.username || "",
+            : '',
+          userAddress: data.account?.userAddress || '',
+          username: data.account?.username || '',
         });
-        setAvatarPreview(data.account?.userAvatar || "/public/DoctorLogin.png");
+
+        setAvatarPreview(data.account?.userAvatar || '/public/DoctorLogin.png');
       } catch {
-        setError("Không thể tải thông tin bệnh nhân.");
+        setError('Không thể tải thông tin bệnh nhân.');
       } finally {
         setLoading(false);
       }
@@ -65,7 +65,7 @@ const EditPatientProfile = () => {
   }, [patientId]);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
       [name]: value,
@@ -83,24 +83,30 @@ const EditPatientProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
     try {
       const userAvatarFile = avatarFile;
       const updateData = {
         patientName: form.patientName,
         patientPhone: form.patientPhone,
-        // patientEmail is not editable
 
         userGender: form.userGender,
         userDoB: form.userDoB,
         userAddress: form.userAddress,
       };
-      await patientService.updatePatient(patientId, updateData, userAvatarFile);
-      setSuccess("Cập nhật thành công!");
-      setTimeout(() => navigate("/me"), 1200);
-    } catch {
-      setError("Cập nhật thất bại. Vui lòng thử lại.");
+      const res = await patientService.updatePatient(
+        patientId,
+        updateData,
+        userAvatarFile
+      );
+      localStorage.setItem('account', JSON.stringify(res.account));
+      setSuccess('Cập nhật thành công!');
+      setTimeout(() => navigate('/me'), 1200);
+    } catch (error) {
+      console.log(error);
+      setError('Cập nhật thất bại. Vui lòng thử lại.');
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -138,7 +144,7 @@ const EditPatientProfile = () => {
           <Box className="flex flex-col items-center mb-4">
             <Avatar
               src={
-                avatarPreview?.startsWith("blob:")
+                avatarPreview?.startsWith('blob:')
                   ? avatarPreview
                   : `${baseUrl}${avatarPreview}`
               }
@@ -163,14 +169,6 @@ const EditPatientProfile = () => {
               Chỉ chấp nhận ảnh PNG, JPG, JPEG. Dung lượng &lt; 2MB.
             </Typography>
           </Box>
-          <TextField
-            label="Tên đăng nhập"
-            name="username"
-            value={form.username}
-            fullWidth
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
           <TextField
             label="Họ và tên"
             name="patientName"
@@ -203,7 +201,7 @@ const EditPatientProfile = () => {
             <RadioGroup
               row
               name="userGender"
-              value={form.userGender === "true" ? "true" : "false"}
+              value={form.userGender === 'true' ? 'true' : 'false'}
               onChange={handleChange}
             >
               <FormControlLabel value="true" control={<Radio />} label="Nam" />
@@ -242,7 +240,7 @@ const EditPatientProfile = () => {
             <Button
               variant="outlined"
               color="secondary"
-              onClick={() => navigate("/me")}
+              onClick={() => navigate('/me')}
               size="large"
               sx={{ minWidth: 140 }}
             >

@@ -17,6 +17,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DoctorService from '../../services/doctor.service';
 import DoctorForm from './DoctorForm';
+import { toast } from 'react-toastify';
+import { EditIcon } from 'lucide-react';
 
 const blue = '#2563eb';
 
@@ -39,6 +41,7 @@ const SpecialtyDoctorsDialog = ({ open, onClose, specialty }) => {
       const filtered = res.filter((doc) => doc.specialtyId === specialty.id);
       setDoctors(filtered);
     } catch (err) {
+      console.log(err);
       setDoctors([]);
     } finally {
       setLoading(false);
@@ -73,7 +76,10 @@ const SpecialtyDoctorsDialog = ({ open, onClose, specialty }) => {
     try {
       await DoctorService.deleteDoctor(confirmDelete.doctor.id);
       fetchDoctors();
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+      toast.error('Xóa bác sĩ không thành công.');
+    }
     setConfirmDelete({ open: false, doctor: null });
   };
 
@@ -93,7 +99,10 @@ const SpecialtyDoctorsDialog = ({ open, onClose, specialty }) => {
       }
       setOpenForm(false);
       fetchDoctors();
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+      toast.error('Lưu thông tin bác sĩ không thành công.');
+    }
   };
 
   return (
@@ -162,7 +171,7 @@ const SpecialtyDoctorsDialog = ({ open, onClose, specialty }) => {
                       color="primary"
                       onClick={() => handleEdit(doctor)}
                     >
-                      <AddIcon sx={{ transform: 'rotate(45deg)' }} />
+                      <EditIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Xoá">

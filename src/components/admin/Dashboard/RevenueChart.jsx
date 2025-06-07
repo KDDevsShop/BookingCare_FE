@@ -26,11 +26,14 @@ const RevenueChart = ({ data, timeFilter }) => {
       }
     });
   } else {
-    // Data by day
-    const maxDay =
-      Array.isArray(data) && Math.max(...data.map((d) => d.day), 31);
-    labels = Array?.from({ length: maxDay }, (_, i) => `Ngày ${i + 1}`);
-    values = Array(maxDay)?.fill(0);
+    let maxDay = 31;
+    if (Array.isArray(data) && data.length > 0) {
+      const maxFromData = Math.max(...data.map((d) => d.day));
+      maxDay =
+        Number.isFinite(maxFromData) && maxFromData > 0 ? maxFromData : 31;
+    }
+    labels = Array.from({ length: maxDay }, (_, i) => `Ngày ${i + 1}`);
+    values = Array(maxDay).fill(0);
     data.forEach((item) => {
       if (item.day >= 1 && item.day <= maxDay) {
         values[item.day - 1] = item.revenue;

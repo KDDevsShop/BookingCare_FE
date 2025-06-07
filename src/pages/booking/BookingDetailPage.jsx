@@ -21,6 +21,7 @@ function BookingDetailPage() {
         const res = await BookingService.getBookingById(id);
         setBooking(res);
       } catch (err) {
+        console.log(err);
         setError('Không thể tải chi tiết đặt lịch.');
       } finally {
         setLoading(false);

@@ -122,7 +122,12 @@ const EditDoctorProfile = () => {
         userDoB: form.userDoB,
         userAddress: form.userAddress,
       };
-      await doctorService.updateDoctor(doctorId, updateData, userAvatarFile);
+      const res = await doctorService.updateDoctor(
+        doctorId,
+        updateData,
+        userAvatarFile
+      );
+      localStorage.setItem('account', JSON.stringify(res.account));
       setSuccess('Cập nhật thành công!');
       setTimeout(() => navigate('/doctor/profile'), 1200);
     } catch {
@@ -253,20 +258,14 @@ const EditDoctorProfile = () => {
             </Typography>
           </Box>
           <TextField
-            label="Tên đăng nhập"
-            name="username"
-            value={form.username}
-            fullWidth
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-          <TextField
             label="Email"
             name="email"
             value={form.email}
             fullWidth
             InputProps={{ readOnly: true }}
             margin="normal"
+            disabled
+            className="hover:cursor-not-allowed!"
           />
           <TextField
             label="Họ và tên"

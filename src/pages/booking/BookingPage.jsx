@@ -27,7 +27,7 @@ function BookingPage() {
         ...prev,
         patientName: account.patient.patientName || '',
         patientPhone: account.patient.patientPhone || '',
-        patientEmail: account.patient.patientEmail || '',
+        patientEmail: account.email || '',
       }));
     }
   }, []);
@@ -58,6 +58,7 @@ function BookingPage() {
         bookingEndTime: schedule.schedule?.endTime,
         patientId,
         doctorId: doctor.id,
+        email: form.patientEmail,
       };
       const res = await BookingService.createBooking(bookingData);
       const bookingId = res?.booking?.id;
@@ -70,6 +71,7 @@ function BookingPage() {
         toast.error(res?.message || 'Đặt lịch thất bại. Vui lòng thử lại.');
       }
     } catch (err) {
+      console.log(err);
       toast.error('Đặt lịch thất bại. Vui lòng thử lại.');
     } finally {
       setSubmitting(false);

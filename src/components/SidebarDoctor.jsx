@@ -57,14 +57,26 @@ const SidebarDoctor = () => {
           </Link>
         ))}
       </nav>
-      <div className="mt-auto p-4 border-t border-gray-100">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer hover:text-red-500"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
+      <div className="mt-auto p-4 border-t border-gray-100 flex justify-center items-center gap-6">
+        <img
+          src={`${
+            user?.userAvatar
+              ? `http://localhost:5000${user?.userAvatar}`
+              : './DoctorLogin.png'
+          }`}
+          alt="Avt"
+          className="w-16 h-16 rounded-full object-cover border-2 border-indigo-200 shadow-sm"
+        />
+        <div>
+          <h2 className="text-sm line-clamp-1">{user?.doctor?.doctorName}</h2>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-sm mx-auto mt-2 text-gray-500 cursor-pointer hover:text-red-500"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
       </div>
     </aside>
   );

@@ -75,7 +75,7 @@ const Login = () => {
           {/* Tabs */}
           <div className="flex mb-8 border-b border-blue-100">
             <Link
-              to="/"
+              to="/login"
               className="mr-6 pb-2 text-blue-700 font-bold border-b-4 border-blue-600 transition-all duration-200"
             >
               Đăng nhập

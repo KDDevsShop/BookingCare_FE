@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DoctorService from '../../services/doctor.service';
 import DoctorScheduleService from '../../services/doctorSchedule.service';
@@ -13,7 +13,9 @@ function DoctorDetail() {
   const [error, setError] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [scheduleLoading, setScheduleLoading] = useState(true);
-  const [filterDate, setFilterDate] = useState('');
+  const [filterDate, setFilterDate] = useState(
+    new Date().toISOString().split('T')[0]
+  );
 
   useEffect(() => {
     async function fetchDoctor() {
@@ -34,8 +36,18 @@ function DoctorDetail() {
       setScheduleLoading(true);
       try {
         const res = await DoctorScheduleService.getSchedulesByDoctorId(id);
-        console.log(res);
-        setSchedules(res || []);
+        // Get current date in Vietnam timezone (UTC+7)
+        const currentDate = new Date(
+          Date.now() + 7 * 60 * 60 * 1000
+        ).toISOString();
+        const filteredSchedules = res.filter(
+          (s) =>
+            s.workDate >= currentDate.split('T')[0] &&
+            s.isConfirmed &&
+            parseInt(s.schedule.startTime.split(':')[0]) >
+              parseInt(currentDate.split('T')[1].split(':')[0]) + 1
+        );
+        setSchedules(filteredSchedules || []);
       } catch {
         setError('Không thể tải lịch làm việc');
       } finally {
@@ -165,11 +177,7 @@ function DoctorDetail() {
               className="border border-blue-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              max={
-                schedules.length > 0
-                  ? schedules[schedules.length - 1].workDate
-                  : undefined
-              }
+              min={new Date().toISOString().split('T')[0]}
             />
             {filterDate && (
               <button

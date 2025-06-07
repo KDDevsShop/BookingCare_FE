@@ -22,6 +22,7 @@ const BookingConfirmPage = () => {
         navigate(`/booking/${bookingId}`);
       }, 1500);
     } catch (error) {
+      console.log(error);
       message.error('Xác nhận thất bại. Vui lòng thử lại.');
     } finally {
       setLoading(false);

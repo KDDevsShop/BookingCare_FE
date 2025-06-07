@@ -85,19 +85,24 @@ const WorkSchedule = () => {
     setChosenShifts([]);
   };
 
-  // Get chosen shifts for selectedDate
-  const chosenShiftIds = schedules
-    .filter((item) => item.workDate === selectedDate)
-    .map((item) => item.schedule?.id);
+  const nowVN = new Date(Date.now() + 7 * 60 * 60 * 1000);
+  const todayVN = nowVN.toISOString().split('T')[0];
+  const currentTimeVN = nowVN.toISOString().split('T')[1].split(':')[0]; // 'HH:MM'
 
   // Filter available/unavailable shifts for selectedDate
-  const availableShifts = allSchedules.filter(
-    (sch) =>
-      !sch.doctorSchedules?.some(
-        (ds) =>
-          ds.workDate === modalWorkDate && ds.doctorId === Number(doctorId)
-      ) && !chosenShifts.includes(sch.id)
-  );
+  const availableShifts = allSchedules.filter((sch) => {
+    const isAlreadyRegistered = sch.doctorSchedules?.some(
+      (ds) => ds.workDate === modalWorkDate && ds.doctorId === Number(doctorId)
+    );
+    const isAlreadyChosen = chosenShifts.includes(sch.id);
+    let isPast = false;
+    if (modalWorkDate === todayVN) {
+      if (sch.startTime && sch.startTime.split(':')[0] < currentTimeVN) {
+        isPast = true;
+      }
+    }
+    return !isAlreadyRegistered && !isAlreadyChosen && !isPast;
+  });
   const selectedShifts = allSchedules.filter((sch) =>
     chosenShifts.includes(sch.id)
   );

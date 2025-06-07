@@ -22,7 +22,7 @@ function BookingDetailDoctor() {
   const [prescriptionError, setPrescriptionError] = useState(null);
   const [emailSuccess, setEmailSuccess] = useState(null);
   const [emailError, setEmailError] = useState(null);
-  const role = JSON.parse(localStorage.getItem('user'))?.role.role || '';
+  const role = JSON.parse(localStorage.getItem('account'))?.role || '';
   console.log(role);
 
   useEffect(() => {

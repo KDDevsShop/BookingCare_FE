@@ -48,6 +48,11 @@ const DoctorForm = ({
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
 
+  const handleClose = () => {
+    setForm(doctor);
+    onClose();
+  };
+
   useEffect(() => {
     if (doctor) {
       setForm({
@@ -132,7 +137,7 @@ const DoctorForm = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle
         sx={{ fontWeight: 700, color: 'primary.main', textAlign: 'center' }}
       >
@@ -252,15 +257,6 @@ const DoctorForm = ({
                 Thông tin tài khoản
               </Typography>
             </Box>
-            <TextField
-              label="Tên đăng nhập"
-              name="username"
-              value={form.username}
-              onChange={handleChange}
-              required
-              fullWidth
-              disabled={!!doctor}
-            />
             {!doctor && (
               <TextField
                 label="Mật khẩu"
@@ -272,15 +268,6 @@ const DoctorForm = ({
                 type="password"
               />
             )}
-            <TextField
-              label="Email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              fullWidth
-              type="email"
-            />
             <TextField
               label="Địa chỉ"
               name="userAddress"
