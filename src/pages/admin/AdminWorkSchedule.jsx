@@ -203,13 +203,17 @@ const AdminWorkSchedule = () => {
       align: 'center',
       flex: 1,
       renderCell: (params) => {
-        return params?.value ? (
+        return params?.value === null ? (
+          <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-semibold">
+            Chờ duyệt
+          </span>
+        ) : params?.value ? (
           <span className="px-2 py-1 rounded bg-green-200 text-green-800 text-xs font-semibold">
             Đã duyệt
           </span>
         ) : (
-          <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-semibold">
-            Chờ duyệt
+          <span className="px-2 py-1 rounded bg-red-200 text-red-700 text-xs font-semibold">
+            Đã từ chối
           </span>
         );
       },
@@ -221,7 +225,7 @@ const AdminWorkSchedule = () => {
       flex: 1.2,
       align: 'center',
       renderCell: (params) => {
-        return !params?.row?.isConfirmed ? (
+        return params?.row?.isConfirmed === null ? (
           <Stack direction="row" spacing={1} justifyContent="center">
             <Button
               size="small"

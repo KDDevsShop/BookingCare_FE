@@ -5,6 +5,8 @@ import DoctorScheduleService from '../../services/doctorSchedule.service';
 
 const baseUrl = 'http://localhost:5000';
 
+const currentDate = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString();
+
 function DoctorDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -36,17 +38,21 @@ function DoctorDetail() {
       setScheduleLoading(true);
       try {
         const res = await DoctorScheduleService.getSchedulesByDoctorId(id);
-        // Get current date in Vietnam timezone (UTC+7)
-        const currentDate = new Date(
-          Date.now() + 7 * 60 * 60 * 1000
-        ).toISOString();
-        const filteredSchedules = res.filter(
-          (s) =>
-            s.workDate >= currentDate.split('T')[0] &&
-            s.isConfirmed &&
-            parseInt(s.schedule.startTime.split(':')[0]) >
-              parseInt(currentDate.split('T')[1].split(':')[0]) + 1
-        );
+        let filteredSchedules = res;
+
+        console.log(currentDate.split('T')[0]);
+        console.log(filterDate);
+
+        if (currentDate.split('T')[0] === filterDate) {
+          filteredSchedules = res.filter(
+            (s) =>
+              s.workDate >= currentDate.split('T')[0] &&
+              s.isConfirmed &&
+              parseInt(s.schedule.startTime.split(':')[0]) >
+                parseInt(currentDate.split('T')[1].split(':')[0]) + 1
+          );
+        }
+
         setSchedules(filteredSchedules || []);
       } catch {
         setError('Không thể tải lịch làm việc');
@@ -55,7 +61,7 @@ function DoctorDetail() {
       }
     }
     if (id) fetchSchedules();
-  }, [id]);
+  }, [id, filterDate]);
 
   const filteredSchedules = filterDate
     ? schedules

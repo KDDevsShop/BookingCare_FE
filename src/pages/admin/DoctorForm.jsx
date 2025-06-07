@@ -259,6 +259,17 @@ const DoctorForm = ({
             </Box>
             {!doctor && (
               <TextField
+                label="Email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                fullWidth
+                type="email"
+              />
+            )}
+            {!doctor && (
+              <TextField
                 label="Mật khẩu"
                 name="password"
                 value={form.password}

@@ -13,7 +13,7 @@ class DoctorScheduleService {
     return this.api.request(`/work-schedules/${doctorId}`, 'GET');
   }
 
-  async createSchedule(doctorId, scheduleId, workDate, isConfirmed = false) {
+  async createSchedule(doctorId, scheduleId, workDate, isConfirmed = null) {
     return this.api.request(
       '/',
       'POST',
