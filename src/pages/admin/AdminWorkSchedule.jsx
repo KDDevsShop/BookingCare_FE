@@ -254,10 +254,14 @@ const AdminWorkSchedule = () => {
               )}
             </Button>
           </Stack>
+        ) : params?.row?.isConfirmed ? (
+          <span className="px-2 py-1 rounded bg-green-200 text-green-800 text-xs font-semibold">
+            Đã duyệt
+          </span>
         ) : (
-          <Button variant="contained" color="error">
-            Xóa lịch làm
-          </Button>
+          <span className="px-2 py-1 rounded bg-red-200 text-red-700 text-xs font-semibold">
+            Đã từ chối
+          </span>
         );
       },
     },

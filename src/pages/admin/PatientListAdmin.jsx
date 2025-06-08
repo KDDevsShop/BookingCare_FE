@@ -19,7 +19,12 @@ const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'patientName', headerName: 'Tên bệnh nhân', flex: 1.5 },
   { field: 'patientPhone', headerName: 'Số điện thoại', flex: 1 },
-  { field: 'patientEmail', headerName: 'Email', flex: 1.5 },
+  {
+    field: 'account',
+    headerName: 'Email',
+    flex: 1.5,
+    renderCell: (params) => params?.value?.email,
+  },
   {
     field: 'gender',
     headerName: 'Giới tính',
@@ -155,7 +160,7 @@ function PatientListAdmin() {
                 <Typography variant="h6">{viewPatient.patientName}</Typography>
               </Box>
               <Typography>
-                <b>Email:</b> {viewPatient.patientEmail}
+                <b>Email:</b> {viewPatient.account.email}
               </Typography>
               <Typography>
                 <b>Số điện thoại:</b> {viewPatient.patientPhone}

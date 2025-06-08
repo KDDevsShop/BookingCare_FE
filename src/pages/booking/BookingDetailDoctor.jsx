@@ -183,7 +183,7 @@ function BookingDetailDoctor() {
           </div>
           <div className="flex items-center gap-2">
             <span className="font-semibold text-blue-700 w-28">Email:</span>
-            <span className="text-gray-700">{patient.patientEmail}</span>
+            <span className="text-gray-700">{patient.account.email}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="font-semibold text-blue-700 w-28">
@@ -195,7 +195,6 @@ function BookingDetailDoctor() {
       </div>
     </div>
   );
-  console.log(prescription);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-10">
       <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-blue-100">

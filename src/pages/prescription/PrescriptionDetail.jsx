@@ -6,7 +6,6 @@ function PrescriptionDetail({ prescription, onEdit, onSendEmail, isSent }) {
   const firstPrescription = Array.isArray(prescription)
     ? prescription[0]
     : prescription;
-  console.log(role);
 
   if (!firstPrescription) {
     return (

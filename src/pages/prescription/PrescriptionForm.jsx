@@ -8,6 +8,10 @@ function PrescriptionForm({ booking, doctor, onSubmit, initialData }) {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
 
+  {
+    console.log(booking);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setGenerating(true);
@@ -128,7 +132,7 @@ function PrescriptionForm({ booking, doctor, onSubmit, initialData }) {
           Bệnh nhân: {booking?.patient?.patientName}
         </div>
         <div className="text-sm text-blue-700 mb-1">
-          Email: {booking?.patient?.patientEmail}
+          Email: {booking?.patient?.account?.email}
         </div>
         <div className="mt-2 text-gray-700">
           <span className="font-semibold">Kết quả khám:</span> {result}

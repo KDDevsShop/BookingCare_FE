@@ -1,7 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import doctorService from '../../services/doctor.service';
 import { CircularProgress } from '@mui/material';
 import statisticService from '../../services/statistic.service';
+import dayjs from 'dayjs';
+
+const currentMonth = dayjs().get('month') + 1;
 
 const DoctorProfile = () => {
   let currentAccount = null;
@@ -17,9 +20,9 @@ const DoctorProfile = () => {
   const [error, setError] = useState('');
   const baseUrl = 'http://localhost:5000';
 
-  const currentMonth = useMemo(() => new Date().getMonth(), []);
-
   const [doctorRevenues, setDoctorRevenues] = useState();
+
+  console.log(currentMonth);
 
   const fetchDotorRevenue = useCallback(async () => {
     setLoading(true);
@@ -32,7 +35,7 @@ const DoctorProfile = () => {
     );
 
     setDoctorRevenues(doctorRevenue);
-  }, [currentMonth, doctorId]);
+  }, [doctorId]);
 
   useEffect(() => {
     fetchDotorRevenue();
@@ -163,7 +166,6 @@ const DoctorProfile = () => {
           <div className="bg-white/80 border border-blue-100 rounded-lg px-4 py-2 shadow text-center w-full">
             <span className="block text-xs text-blue-700 font-semibold mb-1">
               Doanh thu tháng này
-              {console.log(doctorRevenues)}
             </span>
             <span className="text-lg font-bold text-green-700">
               {doctorRevenues.revenue?.toLocaleString('vi-VN') || 0} VNĐ
