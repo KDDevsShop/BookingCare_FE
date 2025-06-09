@@ -21,7 +21,7 @@ const WorkSchedule = () => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(
-    dayjs().format('YYYY-MM-DD')
+    dayjs().add(1, 'day').format('YYYY-MM-DD')
   );
   const [filteredSchedules, setFilteredSchedules] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -271,7 +271,7 @@ const WorkSchedule = () => {
             <input
               type="date"
               value={modalWorkDate}
-              min={dayjs().format('YYYY-MM-DD')}
+              min={dayjs().add(1, 'day').format('YYYY-MM-DD')}
               onChange={(e) => {
                 setModalWorkDate(e.target.value);
                 setChosenShifts([]);

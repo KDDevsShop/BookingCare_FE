@@ -30,7 +30,7 @@ const AdminWorkSchedule = () => {
   const [chosenShifts, setChosenShifts] = useState([]);
   const [modalLoading, setModalLoading] = useState(false);
   const [modalWorkDate, setModalWorkDate] = useState(
-    dayjs().format('DD-MM-YYYY')
+    dayjs().add(1, 'day').format('YYYY-MM-DD')
   );
   const [registering, setRegistering] = useState(false);
   const [doctors, setDoctors] = useState([]);
@@ -268,7 +268,7 @@ const AdminWorkSchedule = () => {
   ];
 
   const handleOpenModal = () => {
-    setModalWorkDate(dayjs().format('YYYY-MM-DD'));
+    setModalWorkDate(dayjs().add(1, 'day').format('YYYY-MM-DD'));
     setOpenModal(true);
     setSelectedDoctor('');
     setChosenShifts([]);
@@ -453,7 +453,7 @@ const AdminWorkSchedule = () => {
             <input
               type="date"
               value={modalWorkDate}
-              min={dayjs().format('YYYY-MM-DD')}
+              min={dayjs().add(1, 'day').format('YYYY-MM-DD')}
               onChange={(e) => {
                 setModalWorkDate(e.target.value);
                 setChosenShifts([]);
