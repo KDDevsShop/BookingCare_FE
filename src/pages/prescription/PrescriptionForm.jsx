@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import html2canvas from 'html2canvas-pro';
 
 function PrescriptionForm({ booking, doctor, onSubmit, initialData }) {
@@ -8,17 +8,32 @@ function PrescriptionForm({ booking, doctor, onSubmit, initialData }) {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
 
-  {
-    console.log(booking);
-  }
+  // Load draft from localStorage if available (for update)
+  useEffect(() => {
+    const key = `prescription-draft-${booking?.id}`;
+    // Only load draft if not initialData (not editing from DB)
+    if (!initialData) {
+      const draft = localStorage.getItem(key);
+      if (draft) {
+        try {
+          const parsed = JSON.parse(draft);
+          setResult(parsed.result || '');
+          setMedicine(parsed.medicine || '');
+          setUsage(parsed.usage || '');
+        } catch {}
+      }
+    }
+  }, [booking?.id, initialData]);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setGenerating(true);
     setError(null);
     try {
+      // Save form values to localStorage as draft
+      const key = `prescription-draft-${booking?.id}`;
+      localStorage.setItem(key, JSON.stringify({ result, medicine, usage }));
       // Wait for the preview to render before capturing
-
       await new Promise((resolve) => setTimeout(resolve, 100));
       const node = document.getElementById('prescription-preview');
       if (!node) {
@@ -26,28 +41,24 @@ function PrescriptionForm({ booking, doctor, onSubmit, initialData }) {
         setGenerating(false);
         return;
       }
-
       const canvas = await html2canvas(node, {
         backgroundColor: '#ffffff',
         useCORS: true,
       });
-      console.log(canvas);
       canvas.toBlob((blob) => {
         if (!blob) {
           setError('Failed to generate image');
           setGenerating(false);
           return;
         }
-
         // Wrap the Blob in a File if you want to give it a name
         const file = new File([blob], 'prescription.png', {
           type: 'image/png',
         });
-
         // Then you can submit this File to your API:
         onSubmit(file);
-
         setGenerating(false);
+        // Do NOT clear the draft here; only clear on email or update click
       }, 'image/png');
     } catch (error) {
       console.error(error);

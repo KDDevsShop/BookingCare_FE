@@ -233,7 +233,7 @@ function DoctorDetail() {
                         {sch.currentPatients}
                       </td>
                       <td className="py-2 px-4">
-                        {sch.isAvailable ? (
+                        {sch.currentPatients < 3 ? (
                           <button
                             className="inline-block px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-semibold shadow hover:bg-blue-700 transition"
                             onClick={() =>
